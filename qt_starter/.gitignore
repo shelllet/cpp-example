@@ -1,0 +1,43 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# visual studio 2017
+
+# dir
+.vs/
+.vscode/
+.cipd/
+.idea/
+x64/
+Debug/
+Release/
+bin/
+
+# golang
+pkg/
+#src/modules/**/*.h
+
+# System Files
+.DS_Store
+Thumbs.db
+*.ttf
+*.aps
+*.vcxproj.user
+*.mm
+*.txt
+*.dll
+*.exe
+*.rst
+*.user
+Makefile
+test.c
+duk_source_meta.json
+package-lock.json
+.qmake.stash
+
+
+/GeneratedFiles

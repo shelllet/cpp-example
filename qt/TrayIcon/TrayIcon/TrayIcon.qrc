@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/TrayIcon">
+        <file alias="icon">4804802-gamer-png-download-512512-free-transparent-joystick-png-download-gamer-png-900_520.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+# ignore files
+
+/**/*.user
+*.filters
+
+/**/x64
+.vs/
+
+/**/Debug/
+/**/out/

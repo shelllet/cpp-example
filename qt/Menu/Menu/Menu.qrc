@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Menu">
+        <file alias="gamer">gamer-Sticker-by-Adimanav.jpg</file>
+    </qresource>
+</RCC>

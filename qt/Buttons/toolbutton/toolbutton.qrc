@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/new/toolbutton">
+        <file>help.png</file>
+        <file>open.png</file>
+        <file>save.png</file>
+    </qresource>
+</RCC>

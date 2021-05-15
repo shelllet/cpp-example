@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputDialog", "InputDialog\InputDialog.vcxproj", "{EE6F96AC-8CA2-49E2-83B5-FE1EFC3AE7F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE6F96AC-8CA2-49E2-83B5-FE1EFC3AE7F5}.Debug|x64.ActiveCfg = Debug|x64
+		{EE6F96AC-8CA2-49E2-83B5-FE1EFC3AE7F5}.Debug|x64.Build.0 = Debug|x64
+		{EE6F96AC-8CA2-49E2-83B5-FE1EFC3AE7F5}.Release|x64.ActiveCfg = Release|x64
+		{EE6F96AC-8CA2-49E2-83B5-FE1EFC3AE7F5}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2FCFF17-B46A-4420-AFE9-6D2A90823EB4}
+	EndGlobalSection
+EndGlobal

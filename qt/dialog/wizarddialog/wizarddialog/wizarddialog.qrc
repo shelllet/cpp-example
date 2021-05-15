@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/wizarddialog">
+        <file alias="222">20200922195737_1.jpg</file>
+        <file alias="233">231102-151931226201f1.jpg</file>
+    </qresource>
+</RCC>

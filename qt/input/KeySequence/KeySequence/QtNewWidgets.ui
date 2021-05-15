@@ -1,0 +1,23 @@
+<UI version="4.0" >
+ <class>QtNewWidgets</class>
+ <widget class="QWidget" name="QtNewWidgets" >
+  <property name="objectName" >
+   <string notr="true">QtNewWidgets</string>
+  </property>
+  <property name="geometry" >
+   <rect>
+	<x>0</x>
+	<y>0</y>
+	<width>400</width>
+	<height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>QtNewWidgets</string>
+  </property>
+ </widget>
+ <layoutDefault spacing="6" margin="11" />
+ <pixmapfunction></pixmapfunction>
+ <resources/>
+ <connections/>
+</UI>

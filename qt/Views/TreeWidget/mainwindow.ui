@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTreeWidget" name="treeWidget">
+      <column>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <item>
+       <property name="text">
+        <string>新建项目</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>a</string>
+       </property>
+       <property name="checkState">
+        <enum>Unchecked</enum>
+       </property>
+       <property name="text">
+        <string>aa</string>
+       </property>
+       <property name="text">
+        <string>bbb</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>b</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>新建项目</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>新建子项目</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>新建子项目</string>
+         </property>
+        </item>
+       </item>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

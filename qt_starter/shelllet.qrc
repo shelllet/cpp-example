@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/new/tools">
+        <file>images/edit.png</file>
+        <file>images/new.png</file>
+        <file>images/del.png</file>
+        <file>images/quit.png</file>
+        <file>images/set.png</file>
+    </qresource>
+    <qresource prefix="/new/app">
+        <file>favicon.png</file>
+    </qresource>
+</RCC>

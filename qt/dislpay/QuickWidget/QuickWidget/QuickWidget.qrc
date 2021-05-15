@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/QuickWidget">
+        <file>hello.qml</file>
+    </qresource>
+</RCC>

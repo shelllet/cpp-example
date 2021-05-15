@@ -1,0 +1,12 @@
+1>------ Build started: Project: ConsoleApplication1, Configuration: Debug Win32 ------
+1>Using triplet "x86-windows" from "D:\vcpkg\installed\x86-windows\"
+1>ConsoleApplication1.cpp
+1>D:\qt\c++\constant\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(1,1): warning C4828: The file contains a character starting at offset 0x1e7 that is illegal in the current source character set (codepage 65001).
+1>D:\qt\c++\constant\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(1,1): warning C4828: The file contains a character starting at offset 0x1e9 that is illegal in the current source character set (codepage 65001).
+1>D:\qt\c++\constant\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(1,1): warning C4828: The file contains a character starting at offset 0x225 that is illegal in the current source character set (codepage 65001).
+1>D:\qt\c++\constant\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(1,1): warning C4828: The file contains a character starting at offset 0x227 that is illegal in the current source character set (codepage 65001).
+1>D:\qt\c++\constant\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(1,1): warning C4828: The file contains a character starting at offset 0x251 that is illegal in the current source character set (codepage 65001).
+1>D:\qt\c++\constant\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(1,1): warning C4828: The file contains a character starting at offset 0x253 that is illegal in the current source character set (codepage 65001).
+1>ConsoleApplication1.vcxproj -> D:\qt\c++\constant\ConsoleApplication1\Debug\ConsoleApplication1.exe
+1>Done building project "ConsoleApplication1.vcxproj".
+========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========

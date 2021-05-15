@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlainTextEditClass</class>
+ <widget class="QMainWindow" name="PlainTextEditClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>840</width>
+    <height>587</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PlainTextEdit</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPlainTextEdit" name="plainTextEdit">
+      <property name="plainText">
+       <string>
+Qt::UpArrow
+Moves one line up.
+Qt::DownArrow
+Moves one line down.
+Qt::LeftArrow
+Moves one character to the left.
+Qt::RightArrow
+Moves one character to the right.
+PageUp
+Moves one (viewport) page up.
+PageDown
+Moves one (viewport) page down.
+Home
+Moves to the beginning of the text.
+End
+Moves to the end of the text.
+Alt+Wheel
+Scrolls the page horizontally (the Wheel is the mouse wheel).
+Ctrl+Wheel
+Zooms the text.
+Ctrl+A
+Selects all text.
+</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>840</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="PlainTextEdit.qrc"/>
+ </resources>
+ <connections/>
+</ui>

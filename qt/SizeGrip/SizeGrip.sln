@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SizeGrip", "SizeGrip\SizeGrip.vcxproj", "{B82B7C1E-84B7-45BC-9EAB-11D0F389F1A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B82B7C1E-84B7-45BC-9EAB-11D0F389F1A7}.Debug|x64.ActiveCfg = Debug|x64
+		{B82B7C1E-84B7-45BC-9EAB-11D0F389F1A7}.Debug|x64.Build.0 = Debug|x64
+		{B82B7C1E-84B7-45BC-9EAB-11D0F389F1A7}.Release|x64.ActiveCfg = Release|x64
+		{B82B7C1E-84B7-45BC-9EAB-11D0F389F1A7}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {272AFA59-8B6B-4282-9ACB-BA2EFF0B9C12}
+	EndGlobalSection
+EndGlobal

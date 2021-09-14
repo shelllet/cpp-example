@@ -1,0 +1,39 @@
+#include "properties.hpp"
+#include "properties/workflow_assign.h"
+#include "properties/private/workflow_assign_p.h"
+
+
+
+shelllet::properties::WorkflowAssign::WorkflowAssign(const pugi::xml_node& node, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new WorkflowAssignPrivate, node, parent)
+{
+}
+
+QString shelllet::properties::WorkflowAssign::varName() const
+{
+	Q_D(const WorkflowAssign);
+	return d->m_name;
+}
+
+void shelllet::properties::WorkflowAssign::setVarName(const QString& val)
+{
+	Q_D(WorkflowAssign);
+	d->m_name = val;
+}
+
+QVariant shelllet::properties::WorkflowAssign::varValue() const
+{
+	Q_D(const WorkflowAssign);
+	return d->m_value;
+}
+
+void shelllet::properties::WorkflowAssign::setVarValue(const QVariant& val)
+{
+	Q_D(WorkflowAssign);
+	d->m_value = val;
+}
+
+int shelllet::properties::WorkflowAssign::getPropertyMetaTypeID() const
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}

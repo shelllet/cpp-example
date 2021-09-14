@@ -1,0 +1,35 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class BoolPropertyManagerPrivate;
+        class BoolPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(BoolPropertyManager)
+        public:
+            BoolPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			BoolPropertyManager(QObject* parent = 0);
+			~BoolPropertyManager();
+
+			bool value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, bool val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, bool val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			QIcon valueIcon(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			QScopedPointer<QtBoolPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtBoolPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtBoolPropertyManager)
+        protected:
+            BoolPropertyManager(BoolPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

@@ -1,0 +1,46 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class DoublePropertyManagerPrivate;
+        class DoublePropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(DoublePropertyManager)
+        public:
+            DoublePropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			DoublePropertyManager(QObject* parent = 0);
+			~DoublePropertyManager();
+
+			double value(const PropertySheet* property) const;
+			double minimum(const PropertySheet* property) const;
+			double maximum(const PropertySheet* property) const;
+			double singleStep(const PropertySheet* property) const;
+			int decimals(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, double val);
+			void setMinimum(PropertySheet* property, double minVal);
+			void setMaximum(PropertySheet* property, double maxVal);
+			void setRange(PropertySheet* property, double minVal, double maxVal);
+			void setSingleStep(PropertySheet* property, double step);
+			void setDecimals(PropertySheet* property, int prec);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, double val);
+			void rangeChanged(PropertySheet* property, double minVal, double maxVal);
+			void singleStepChanged(PropertySheet* property, double step);
+			void decimalsChanged(PropertySheet* property, int prec);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			QScopedPointer<QtDoublePropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtDoublePropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtDoublePropertyManager)
+        protected:
+            DoublePropertyManager(DoublePropertyManagerPrivate& d, QObject* parent, Object*/*parent = nullptr*/);
+        };
+    }
+}
+    

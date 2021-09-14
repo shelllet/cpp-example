@@ -1,0 +1,259 @@
+#include "property/framework.h"
+#include "property/abstractpropertymanager.h"
+#include "property/doublepropertymanager.h"
+#include "private/qobject_p.h"
+#include "property/private/abstractpropertymanager_p.h"
+#include "property/private/doublepropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+DoublePropertyManager::DoublePropertyManager(Object* parent /*= nullptr*/)
+    :DoublePropertyManager(*new DoublePropertyManagerPrivate, nullptr, parent)
+{
+
+}
+DoublePropertyManager::DoublePropertyManager(DoublePropertyManagerPrivate& d, QObject* parent, Object* /*parent*/ /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}
+
+
+DoublePropertyManager::DoublePropertyManager(QObject* parent)
+	: AbstractPropertyManager(*new DoublePropertyManagerPrivate, parent)
+{
+}
+
+/*!
+	Destroys  this manager, and all the properties it has created.
+*/
+DoublePropertyManager::~DoublePropertyManager()
+{
+	clear();
+}
+
+/*!
+	Returns the given \a property's value.
+
+	If the given property is not managed by this manager, this
+	function returns 0.
+
+	\sa setValue()
+*/
+double DoublePropertyManager::value(const PropertySheet* property) const
+{
+	return getValue<double>(d_ptr->m_values, property, 0.0);
+}
+
+/*!
+	Returns the given \a property's minimum value.
+
+	\sa maximum(), setRange()
+*/
+double DoublePropertyManager::minimum(const PropertySheet* property) const
+{
+	return getMinimum<double>(d_ptr->m_values, property, 0.0);
+}
+
+/*!
+	Returns the given \a property's maximum value.
+
+	\sa minimum(), setRange()
+*/
+double DoublePropertyManager::maximum(const PropertySheet* property) const
+{
+	return getMaximum<double>(d_ptr->m_values, property, 0.0);
+}
+
+/*!
+	Returns the given \a property's step value.
+
+	The step is typically used to increment or decrement a property value while pressing an arrow key.
+
+	\sa setSingleStep()
+*/
+double DoublePropertyManager::singleStep(const PropertySheet* property) const
+{
+	return getData<double>(d_ptr->m_values, &DoublePropertyManagerPrivate::Data::singleStep, property, 0);
+}
+
+/*!
+	Returns the given \a property's precision, in decimals.
+
+	\sa setDecimals()
+*/
+int DoublePropertyManager::decimals(const PropertySheet* property) const
+{
+	return getData<int>(d_ptr->m_values, &DoublePropertyManagerPrivate::Data::decimals, property, 0);
+}
+
+/*!
+	\reimp
+*/
+QString DoublePropertyManager::valueText(const PropertySheet* property) const
+{
+	const DoublePropertyManagerPrivate::PropertyValueMap::const_iterator it = d_ptr->m_values.constFind(property);
+	if (it == d_ptr->m_values.constEnd())
+		return QString();
+	return QString::number(it.value().val, 'f', it.value().decimals);
+}
+
+/*!
+	\fn void DoublePropertyManager::setValue(PropertySheet *property, double value)
+
+	Sets the value of the given \a property to \a value.
+
+	If the specified \a value is not valid according to the given
+	\a property's range, the \a value is adjusted to the nearest valid value
+	within the range.
+
+	\sa value(), setRange(), valueChanged()
+*/
+void DoublePropertyManager::setValue(PropertySheet* property, double val)
+{
+	void (DoublePropertyManagerPrivate:: * setSubPropertyValue)(PropertySheet*, double) = 0;
+	setValueInRange<double, DoublePropertyManagerPrivate, DoublePropertyManager, double>(this, d_ptr.data(),
+		&DoublePropertyManager::propertyChanged,
+		&DoublePropertyManager::valueChanged,
+		property, val, setSubPropertyValue);
+}
+
+/*!
+	Sets the step value for the given \a property to \a step.
+
+	The step is typically used to increment or decrement a property value while pressing an arrow key.
+
+	\sa singleStep()
+*/
+void DoublePropertyManager::setSingleStep(PropertySheet* property, double step)
+{
+	const DoublePropertyManagerPrivate::PropertyValueMap::iterator it = d_ptr->m_values.find(property);
+	if (it == d_ptr->m_values.end())
+		return;
+
+	DoublePropertyManagerPrivate::Data data = it.value();
+
+	if (step < 0)
+		step = 0;
+
+	if (data.singleStep == step)
+		return;
+
+	data.singleStep = step;
+
+	it.value() = data;
+
+	emit singleStepChanged(property, data.singleStep);
+}
+
+/*!
+	\fn void DoublePropertyManager::setDecimals(PropertySheet *property, int prec)
+
+	Sets the precision of the given \a property to \a prec.
+
+	The valid decimal range is 0-13. The default is 2.
+
+	\sa decimals()
+*/
+void DoublePropertyManager::setDecimals(PropertySheet* property, int prec)
+{
+	const DoublePropertyManagerPrivate::PropertyValueMap::iterator it = d_ptr->m_values.find(property);
+	if (it == d_ptr->m_values.end())
+		return;
+
+	DoublePropertyManagerPrivate::Data data = it.value();
+
+	if (prec > 13)
+		prec = 13;
+	else if (prec < 0)
+		prec = 0;
+
+	if (data.decimals == prec)
+		return;
+
+	data.decimals = prec;
+
+	it.value() = data;
+
+	emit decimalsChanged(property, data.decimals);
+}
+
+/*!
+	Sets the minimum value for the given \a property to \a minVal.
+
+	When setting the minimum value, the maximum and current values are
+	adjusted if necessary (ensuring that the range remains valid and
+	that the current value is within in the range).
+
+	\sa minimum(), setRange(), rangeChanged()
+*/
+void DoublePropertyManager::setMinimum(PropertySheet* property, double minVal)
+{
+	setMinimumValue<double, DoublePropertyManagerPrivate, DoublePropertyManager, double, DoublePropertyManagerPrivate::Data>(this, d_ptr.data(),
+		&DoublePropertyManager::propertyChanged,
+		&DoublePropertyManager::valueChanged,
+		&DoublePropertyManager::rangeChanged,
+		property, minVal);
+}
+
+/*!
+	Sets the maximum value for the given \a property to \a maxVal.
+
+	When setting the maximum value, the minimum and current values are
+	adjusted if necessary (ensuring that the range remains valid and
+	that the current value is within in the range).
+
+	\sa maximum(), setRange(), rangeChanged()
+*/
+void DoublePropertyManager::setMaximum(PropertySheet* property, double maxVal)
+{
+	setMaximumValue<double, DoublePropertyManagerPrivate, DoublePropertyManager, double, DoublePropertyManagerPrivate::Data>(this, d_ptr.data(),
+		&DoublePropertyManager::propertyChanged,
+		&DoublePropertyManager::valueChanged,
+		&DoublePropertyManager::rangeChanged,
+		property, maxVal);
+}
+
+/*!
+	\fn void DoublePropertyManager::setRange(PropertySheet *property, double minimum, double maximum)
+
+	Sets the range of valid values.
+
+	This is a convenience function defining the range of valid values
+	in one go; setting the \a minimum and \a maximum values for the
+	given \a property with a single function call.
+
+	When setting a new range, the current value is adjusted if
+	necessary (ensuring that the value remains within range).
+
+	\sa setMinimum(), setMaximum(), rangeChanged()
+*/
+void DoublePropertyManager::setRange(PropertySheet* property, double minVal, double maxVal)
+{
+	void (DoublePropertyManagerPrivate:: * setSubPropertyRange)(PropertySheet*, double, double, double) = 0;
+	setBorderValues<double, DoublePropertyManagerPrivate, DoublePropertyManager, double>(this, d_ptr.data(),
+		&DoublePropertyManager::propertyChanged,
+		&DoublePropertyManager::valueChanged,
+		&DoublePropertyManager::rangeChanged,
+		property, minVal, maxVal, setSubPropertyRange);
+}
+
+/*!
+	\reimp
+*/
+void DoublePropertyManager::initializeProperty(PropertySheet* property)
+{
+	d_ptr->m_values[property] = DoublePropertyManagerPrivate::Data();
+}
+
+/*!
+	\reimp
+*/
+void DoublePropertyManager::uninitializeProperty(PropertySheet* property)
+{
+	d_ptr->m_values.remove(property);
+}

@@ -1,0 +1,37 @@
+#include "properties/helper.h"
+#include "graphics.hpp"
+#include "properties.hpp"
+#include "common/private/object_p.h"
+#include "qpainter.h"
+#include "qstyle.h"
+#include "qstyleoption.h"
+#include "graphics/processstartitem.h"
+#include "qgraphicslinearlayout.h"
+#include "graphics/arrowitem.h"
+#include "graphics/simpletextitem.h"
+#include "graphics/arrowitem.h"
+#include "graphics/textitem.h"
+#include "graphics/simpletextitem.h"
+#include "graphics/private/elementitem_p.h"
+namespace shelllet {
+	namespace graphics {
+		class ProcessStartPrivate : public ElementItemPrivate {
+		public:
+		};
+	}
+}
+shelllet::graphics::ProcessStart::ProcessStart(const std::shared_ptr<CompositeProperty>& property, QGraphicsItem* parent /*= 0*/)
+	: ElementItem(*new ProcessStartPrivate, property, parent)
+
+{
+	Q_D(ProcessStart);
+	d->layout = new QGraphicsLinearLayout(Qt::Orientation::Vertical, this);
+	d->layout->setContentsMargins(11, 11, 11, 11);
+
+	setFlag(QGraphicsItem::ItemIsMovable, true);
+	setFlag(QGraphicsItem::ItemIsSelectable, true);
+	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+
+	setAcceptHoverEvents(true);
+}
+

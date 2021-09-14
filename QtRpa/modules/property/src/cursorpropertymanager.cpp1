@@ -1,0 +1,19 @@
+#include "property/cursorpropertymanager.h"
+#include "property/private/cursorpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+CursorPropertyManager::CursorPropertyManager(Object* parent /*= nullptr*/)
+    :CursorPropertyManager(*new CursorPropertyManagerPrivate, parent)
+{
+
+}
+CursorPropertyManager::CursorPropertyManager(CursorPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

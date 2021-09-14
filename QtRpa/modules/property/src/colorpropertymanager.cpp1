@@ -1,0 +1,19 @@
+#include "property/colorpropertymanager.h"
+#include "property/private/colorpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+ColorPropertyManager::ColorPropertyManager(Object* parent /*= nullptr*/)
+    :ColorPropertyManager(*new ColorPropertyManagerPrivate, parent)
+{
+
+}
+ColorPropertyManager::ColorPropertyManager(ColorPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

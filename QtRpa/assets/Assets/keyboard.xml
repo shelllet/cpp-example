@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+  <keyboard display= "Keyboard">
+    <press_and_release category="additional" meta="Code" display="Python Code" icon ="about"></press_and_release>
+  </keyboard>
+  

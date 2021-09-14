@@ -1,0 +1,12 @@
+<TABLE_DATA>
+    <HEADERS>
+        <COLUMN columnId="1" name="ID" width="50"/>
+        <COLUMN columnId="2" name="Name" width="150"/>
+        <COLUMN columnId="3" name="Version" width="150"/>
+        <COLUMN columnId="4" name="Select" width="150"/>
+    </HEADERS>
+    <DATA>
+        <ITEM ID="01" Name="common" Version="0.1.0" Select="1"/>
+        <ITEM ID="02" Name="windows" Version="0.1.0" Select="0"/>
+    </DATA>
+</TABLE_DATA>

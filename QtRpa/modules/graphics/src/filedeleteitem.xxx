@@ -1,0 +1,85 @@
+#include "properties/helper.h"
+#include "graphics.hpp"
+#include "properties.hpp"
+#include "common/private/object_p.h"
+#include "qpainter.h"
+#include "qstyle.h"
+#include "qstyleoption.h"
+#include "graphics/filedeleteitem.h"
+#include "qgraphicslinearlayout.h"
+#include "graphics/arrowitem.h"
+#include "graphics/simpletextitem.h"
+#include "graphics/arrowitem.h"
+#include "graphics/textitem.h"
+#include "graphics/simpletextitem.h"
+#include "graphics/private/elementitem_p.h"
+namespace shelllet {
+	namespace graphics {
+		class FileDeletePrivate : public ElementItemPrivate {
+		public:
+			void setupUi(FileDelete* parent) {
+
+			}
+		};
+	}
+}
+shelllet::graphics::FileDelete::FileDelete(const std::shared_ptr<CompositeProperty>& property, QGraphicsItem* parent /*= 0*/)
+	: ElementItem(*new FileDeletePrivate, property, parent)
+
+{
+	Q_D(FileDelete);
+	d->layout = new QGraphicsLinearLayout(Qt::Orientation::Vertical, this);
+	d->layout->setContentsMargins(11, 11, 11, 11);
+
+	setFlag(QGraphicsItem::ItemIsMovable, false);
+	//setFlag(QGraphicsItem::ItemIsSelectable, true);
+	//setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+
+//	setMinimumHeight(36);
+	//setWindowFlags(Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+	//setAcceptHoverEvents(true);
+}
+
+void shelllet::graphics::FileDelete::paintWindowFrame(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget /*= nullptr*/)
+{
+	QGraphicsWidget::paintWindowFrame(painter, option, widget);
+}
+
+void shelllet::graphics::FileDelete::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget /*= nullptr*/)
+{
+	//throw std::logic_error("The method or operation is not implemented.");
+
+//	__super::paint(painter, option, widget);
+	QRectF titleBarArea = rect();
+	titleBarArea.setHeight(32);
+
+	painter->fillRect(titleBarArea, Qt::yellow);
+
+	{
+		QPixmap pix = prop()->icon().pixmap(24);
+		if (!pix.isNull()) {
+			pix = widget->style()->generatedIconPixmap(QIcon::Disabled, pix, option);
+			widget->style()->drawItemPixmap(painter, { 0, 0, 24, 24 }, Qt::AlignVCenter, pix);
+		}
+
+	}
+	QRectF clientArea = rect();
+	clientArea.setTopLeft(titleBarArea.bottomLeft());
+	painter->fillRect(clientArea, Qt::blue);
+
+	painter->drawRect(rect());
+	painter->drawPoint(rect().center());
+}
+
+QSizeF shelllet::graphics::FileDelete::sizeHint(Qt::SizeHint which, const QSizeF& constraint /*= QSizeF()*/) const
+{
+	//throw std::logic_error("The method or operation is not implemented.");
+
+	/*auto d = geometry();
+	*/if (which == Qt::PreferredSize) {
+
+		return { -1, 64 };
+	}
+	return __super::sizeHint(which, constraint);
+}
+

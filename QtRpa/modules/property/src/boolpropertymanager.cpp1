@@ -1,0 +1,143 @@
+#include "property/framework.h"
+#include "property/abstractpropertymanager.h"
+#include "property/boolpropertymanager.h"
+#include "private/qobject_p.h"
+#include "property/private/abstractpropertymanager_p.h"
+#include "property/private/boolpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+BoolPropertyManager::BoolPropertyManager(Object* parent /*= nullptr*/)
+    :BoolPropertyManager(*new BoolPropertyManagerPrivate, parent)
+{
+
+}
+BoolPropertyManager::BoolPropertyManager(BoolPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}
+
+
+QtBoolPropertyManagerPrivate::QtBoolPropertyManagerPrivate() :
+	m_checkedIcon(drawCheckBox(true)),
+	m_uncheckedIcon(drawCheckBox(false))
+{
+}
+
+/*!
+	\class QtBoolPropertyManager
+	\internal
+	\inmodule QtDesigner
+	\since 4.4
+
+	\brief The QtBoolPropertyManager class provides and manages boolean properties.
+
+	The property's value can be retrieved using the value() function,
+	and set using the setValue() slot.
+
+	In addition, QtBoolPropertyManager provides the valueChanged() signal
+	which is emitted whenever a property created by this manager
+	changes.
+
+	\sa AbstractPropertyManager, QtCheckBoxFactory
+*/
+
+/*!
+	\fn void QtBoolPropertyManager::valueChanged(PropertySheet *property, bool value)
+
+	This signal is emitted whenever a property created by this manager
+	changes its value, passing a pointer to the \a property and the
+	new \a value as parameters.
+*/
+
+/*!
+	Creates a manager with the given \a parent.
+*/
+QtBoolPropertyManager::QtBoolPropertyManager(QObject* parent)
+	: AbstractPropertyManager(parent), d_ptr(new QtBoolPropertyManagerPrivate)
+{
+	d_ptr->q_ptr = this;
+}
+
+/*!
+	Destroys this manager, and all the properties it has created.
+*/
+QtBoolPropertyManager::~QtBoolPropertyManager()
+{
+	clear();
+}
+
+/*!
+	Returns the given \a property's value.
+
+	If the given \a property is not managed by \e this manager, this
+	function returns false.
+
+	\sa setValue()
+*/
+bool QtBoolPropertyManager::value(const PropertySheet* property) const
+{
+	return d_ptr->m_values.value(property, false);
+}
+
+/*!
+	\reimp
+*/
+QString QtBoolPropertyManager::valueText(const PropertySheet* property) const
+{
+	const QMap<const PropertySheet*, bool>::const_iterator it = d_ptr->m_values.constFind(property);
+	if (it == d_ptr->m_values.constEnd())
+		return QString();
+
+	static const QString trueText = tr("True");
+	static const QString falseText = tr("False");
+	return it.value() ? trueText : falseText;
+}
+
+/*!
+	\reimp
+*/
+QIcon QtBoolPropertyManager::valueIcon(const PropertySheet* property) const
+{
+	const QMap<const PropertySheet*, bool>::const_iterator it = d_ptr->m_values.constFind(property);
+	if (it == d_ptr->m_values.constEnd())
+		return QIcon();
+
+	return it.value() ? d_ptr->m_checkedIcon : d_ptr->m_uncheckedIcon;
+}
+
+/*!
+	\fn void QtBoolPropertyManager::setValue(PropertySheet *property, bool value)
+
+	Sets the value of the given \a property to \a value.
+
+	\sa value()
+*/
+void QtBoolPropertyManager::setValue(PropertySheet* property, bool val)
+{
+	setSimpleValue<bool, bool, QtBoolPropertyManager>(d_ptr->m_values, this,
+		&QtBoolPropertyManager::propertyChanged,
+		&QtBoolPropertyManager::valueChanged,
+		property, val);
+}
+
+/*!
+	\reimp
+*/
+void QtBoolPropertyManager::initializeProperty(PropertySheet* property)
+{
+	d_ptr->m_values[property] = false;
+}
+
+/*!
+	\reimp
+*/
+void QtBoolPropertyManager::uninitializeProperty(PropertySheet* property)
+{
+	d_ptr->m_values.remove(property);
+}

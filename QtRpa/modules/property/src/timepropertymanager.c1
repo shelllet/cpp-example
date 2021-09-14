@@ -1,0 +1,19 @@
+#include "property/timepropertymanager.h"
+#include "property/private/timepropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+TimePropertyManager::TimePropertyManager(Object* parent /*= nullptr*/)
+    :TimePropertyManager(*new TimePropertyManagerPrivate, parent)
+{
+
+}
+TimePropertyManager::TimePropertyManager(TimePropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

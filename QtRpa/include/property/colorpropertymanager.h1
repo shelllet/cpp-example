@@ -1,0 +1,39 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class ColorPropertyManagerPrivate;
+        class ColorPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(ColorPropertyManager)
+        public:
+            ColorPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			ColorPropertyManager(QObject* parent = 0);
+			~ColorPropertyManager();
+
+			QtIntPropertyManager* subIntPropertyManager() const;
+
+			QColor value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QColor& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QColor& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			QIcon valueIcon(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtColorPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtColorPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtColorPropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotIntChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+        protected:
+            ColorPropertyManager(ColorPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

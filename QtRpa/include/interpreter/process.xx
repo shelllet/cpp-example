@@ -1,0 +1,68 @@
+#pragma once
+
+
+namespace shelllet {
+    namespace interpreter{
+        class ProcessPrivate;
+        class Process : public Object {
+            Q_DECLARE_PRIVATE(Process)
+            public:
+
+				static bool Start(const String& filename, const std::vector<std::string>& args);
+
+				static BOOL EnumModule(DWORD th32ProcessID, const std::function<bool(LPMODULEENTRY32W)>& cb);
+
+				static BOOL EnumProcess(const std::function<bool(LPPROCESSENTRY32W)>& cb);
+
+				static BOOL EnumThread(const std::function<bool(LPTHREADENTRY32)>& cb);
+
+				static BOOL RunAs(const std::wstring& username, const std::wstring& password, const std::wstring& application, const std::wstring& commandLine, const std::wstring& currentDirectory);
+				static BOOL CreateProcessWithToken(HANDLE hToken, const std::wstring& application, const std::wstring& commandLine, const std::wstring& currentDirectory);
+				static HANDLE OpenProcessToken(DWORD dwProcessId, DWORD desiredAccess = TOKEN_QUERY | TOKEN_DUPLICATE);
+
+				static HANDLE OpenProcessToken();
+				static BOOL AdjustTokenPrivileges(HANDLE hToken, const std::wstring& name, bool e);
+
+				static BOOL RunAsDesktop(const std::wstring& application, const std::wstring& commandLine, const std::wstring& currentDirectory);
+				template<typename TOKENINFORMATION, TOKEN_INFORMATION_CLASS tokenInformationClass>
+				static TOKENINFORMATION TokenInformation(DWORD dwProcessId) {
+					auto hToken = OpenProcessToken(dwProcessId);
+
+					BOOST_SCOPE_EXIT(hToken) {
+						CloseHandle(hToken);
+					}BOOST_SCOPE_EXIT_END;
+
+					DWORD length = 0;
+					TOKENINFORMATION information = nullptr;
+
+					if (!Invoke<&::GetTokenInformation>(
+						hToken,         // handle to the access token
+						tokenInformationClass,    // get information about the token's groups
+						nullptr,   // pointer to PTOKEN_USER buffer
+						0,       // size of buffer
+						&length       // receives required buffer size
+						) && GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
+						return information;
+					}
+
+					information = (TOKENINFORMATION)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, length);
+
+					if (!Invoke<&::GetTokenInformation>(
+						hToken,         // handle to the access token
+						tokenInformationClass,    // get information about the token's groups
+						(LPVOID)information,   // pointer to PTOKEN_USER buffer
+						length,       // size of buffer
+						&length       // receives required buffer size
+						)) {
+						::HeapFree(::GetProcessHeap(), 0, (LPVOID)information);
+						information = nullptr;
+					}
+					return information;
+				}
+				static std::pair<std::wstring, std::wstring> GetUserFromProcess(DWORD dwProcessId);
+        public:
+            static void Embedded(py::module_& m);
+        };
+    }
+}
+    

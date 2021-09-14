@@ -1,0 +1,83 @@
+#include "common.hpp"
+#include "properties/filedelete.h"
+#include "properties/private/filedelete_p.h"
+#include "property_browser/qteditorfactory.h"
+
+#include "qjsonobject.h"
+#include "qjsondocument.h"
+#include "common/environment.h"
+
+
+shelllet::properties::FileDelete::FileDelete(const pugi::xml_node& node, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new FileDeletePrivate, node, parent)
+{
+	Q_D(FileDelete);
+	d->fileName = node.attribute("filename").value();
+}
+void shelllet::properties::FileDelete::setFileName(const QString& fileName)
+{
+	Q_D(FileDelete);
+	d->fileName = fileName;
+}
+
+QString shelllet::properties::FileDelete::fileName() const
+{
+	Q_D(const FileDelete);
+	return d->fileName;
+}
+
+int shelllet::properties::FileDelete::getPropertyMetaTypeID() const
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+void shelllet::properties::FileDelete::getCode(std::ostringstream& oss)
+{
+	Q_D(const FileDelete);
+
+	QJsonObject object{ {"filename", d->fileName} };
+
+	QJsonDocument document(object);
+
+	oss //<< "{" << std::endl
+	//	<< "from system import file_remove"
+		<< std::endl
+		<< "file_remove.invoke"
+		<< "(" << document.toJson() << ");"
+		<< std::endl
+		//<< "}"
+		<< std::endl;
+
+
+}
+//
+//std::string shelllet::properties::FileDelete::getImport() const
+//{
+//	Q_D(const FileDelete);
+//	//return		"import system.file_remove";
+//	//return		"from system import file_remove";
+//
+//	return	__super::getImport();
+//
+//}
+
+QtProperty* shelllet::properties::FileDelete::getInput(QtTreePropertyBrowser* browser)
+{
+	Q_D(FileDelete);
+	auto* input = __super::getInput(browser);
+
+	QtLineEditFactory* lineEdit = new QtLineEditFactory();
+	QtStringPropertyManager* strManager = new QtStringPropertyManager();
+
+	QtProperty* fileName = strManager->addProperty(tr("Filename"));
+	input->addSubProperty(fileName);
+	strManager->setValue(fileName, d->fileName);
+
+	connect(strManager, &QtStringPropertyManager::valueChanged, [d](QtProperty* property, const QString& val) {
+		d->fileName = val;
+	});
+
+	browser->setFactoryForManager(strManager, lineEdit);
+	return input;
+}
+

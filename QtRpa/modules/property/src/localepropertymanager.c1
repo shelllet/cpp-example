@@ -1,0 +1,19 @@
+#include "property/localepropertymanager.h"
+#include "property/private/localepropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+LocalePropertyManager::LocalePropertyManager(Object* parent /*= nullptr*/)
+    :LocalePropertyManager(*new LocalePropertyManagerPrivate, parent)
+{
+
+}
+LocalePropertyManager::LocalePropertyManager(LocalePropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

@@ -1,0 +1,35 @@
+#pragma once
+#include "composite_property.h"
+
+namespace shelllet {
+	namespace properties {
+		class FileDeletePrivate;
+		class FileDelete : public CompositeProperty
+		{
+			Q_OBJECT
+			Q_DECLARE_PRIVATE(FileDelete)
+		public:
+			Q_INVOKABLE FileDelete(const pugi::xml_node& node, QObject* parent = nullptr);
+			void setFileName(const QString& fileName);
+			QString fileName() const;
+
+			int getPropertyMetaTypeID() const override;
+
+
+		
+
+			void getCode(std::ostringstream& oss) override;
+
+
+			//std::string getImport() const override;
+
+		protected:
+			virtual QtProperty* getInput(QtTreePropertyBrowser* browser);
+
+
+		private:
+		
+		};
+	}
+}
+Q_DECLARE_METATYPE(shelllet::properties::FileDelete*)

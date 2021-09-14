@@ -1,0 +1,19 @@
+#include "property/sizepropertymanager.h"
+#include "property/private/sizepropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+SizePropertyManager::SizePropertyManager(Object* parent /*= nullptr*/)
+    :SizePropertyManager(*new SizePropertyManagerPrivate, parent)
+{
+
+}
+SizePropertyManager::SizePropertyManager(SizePropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

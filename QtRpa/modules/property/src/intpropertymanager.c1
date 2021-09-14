@@ -1,0 +1,225 @@
+#include "property/framework.h"
+#include "property/abstractpropertymanager.h"
+#include "property/intpropertymanager.h"
+#include "private/qobject_p.h"
+#include "property/private/abstractpropertymanager_p.h"
+#include "property/private/intpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+IntPropertyManager::IntPropertyManager(Object* parent /*= nullptr*/)
+    :IntPropertyManager(*new IntPropertyManagerPrivate, nullptr, parent)
+{
+
+}
+IntPropertyManager::IntPropertyManager(IntPropertyManagerPrivate& d, QObject* parent, Object* /*parent*/ /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}
+
+
+IntPropertyManager::IntPropertyManager(QObject* parent)
+	: IntPropertyManager(*new IntPropertyManagerPrivate, parent)
+{
+}
+
+/*!
+	Destroys this manager, and all the properties it has created.
+*/
+IntPropertyManager::~IntPropertyManager()
+{
+	clear();
+}
+
+/*!
+	Returns the given \a property's value.
+
+	If the given property is not managed by this manager, this
+	function returns 0.
+
+	\sa setValue()
+*/
+int IntPropertyManager::value(const PropertySheet* property) const
+{
+	Q_D(const IntPropertyManager);
+	return getValue<int>(d->m_values, property, 0);
+}
+
+/*!
+	Returns the given \a property's minimum value.
+
+	\sa setMinimum(), maximum(), setRange()
+*/
+int IntPropertyManager::minimum(const PropertySheet* property) const
+{
+	Q_D(const IntPropertyManager);
+	return getMinimum<int>(d->m_values, property, 0);
+}
+
+/*!
+	Returns the given \a property's maximum value.
+
+	\sa setMaximum(), minimum(), setRange()
+*/
+int IntPropertyManager::maximum(const PropertySheet* property) const
+{
+	Q_D(const IntPropertyManager);
+	return getMaximum<int>(d->m_values, property, 0);
+}
+
+/*!
+	Returns the given \a property's step value.
+
+	The step is typically used to increment or decrement a property value while pressing an arrow key.
+
+	\sa setSingleStep()
+*/
+int IntPropertyManager::singleStep(const PropertySheet* property) const
+{
+	Q_D(const IntPropertyManager);
+	return getData<int>(d->m_values, &IntPropertyManagerPrivate::Data::singleStep, property, 0);
+}
+
+/*!
+	\reimp
+*/
+QString IntPropertyManager::valueText(const PropertySheet* property) const
+{
+	Q_D(const IntPropertyManager);
+	const IntPropertyManagerPrivate::PropertyValueMap::const_iterator it = d->m_values.constFind(property);
+	if (it == d->m_values.constEnd())
+		return QString();
+	return QString::number(it.value().val);
+}
+
+/*!
+	\fn void IntPropertyManager::setValue(PropertySheet *property, int value)
+
+	Sets the value of the given \a property to \a value.
+
+	If the specified \a value is not valid according to the given \a
+	property's range, the \a value is adjusted to the nearest valid
+	value within the range.
+
+	\sa value(), setRange(), valueChanged()
+*/
+void IntPropertyManager::setValue(PropertySheet* property, int val)
+{
+	Q_D(IntPropertyManager);
+	void (IntPropertyManagerPrivate:: * setSubPropertyValue)(PropertySheet*, int) = 0;
+	setValueInRange<int, IntPropertyManagerPrivate, IntPropertyManager, int>(this, d_ptr.data(),
+		&IntPropertyManager::propertyChanged,
+		&IntPropertyManager::valueChanged,
+		property, val, setSubPropertyValue);
+}
+
+/*!
+	Sets the minimum value for the given \a property to \a minVal.
+
+	When setting the minimum value, the maximum and current values are
+	adjusted if necessary (ensuring that the range remains valid and
+	that the current value is within the range).
+
+	\sa minimum(), setRange(), rangeChanged()
+*/
+void IntPropertyManager::setMinimum(PropertySheet* property, int minVal)
+{
+	setMinimumValue<int, IntPropertyManagerPrivate, IntPropertyManager, int, IntPropertyManagerPrivate::Data>(this, d_ptr.data(),
+		&IntPropertyManager::propertyChanged,
+		&IntPropertyManager::valueChanged,
+		&IntPropertyManager::rangeChanged,
+		property, minVal);
+}
+
+/*!
+	Sets the maximum value for the given \a property to \a maxVal.
+
+	When setting maximum value, the minimum and current values are
+	adjusted if necessary (ensuring that the range remains valid and
+	that the current value is within the range).
+
+	\sa maximum(), setRange(), rangeChanged()
+*/
+void IntPropertyManager::setMaximum(PropertySheet* property, int maxVal)
+{
+	setMaximumValue<int, IntPropertyManagerPrivate, IntPropertyManager, int, IntPropertyManagerPrivate::Data>(this, d_ptr.data(),
+		&IntPropertyManager::propertyChanged,
+		&IntPropertyManager::valueChanged,
+		&IntPropertyManager::rangeChanged,
+		property, maxVal);
+}
+
+/*!
+	\fn void IntPropertyManager::setRange(PropertySheet *property, int minimum, int maximum)
+
+	Sets the range of valid values.
+
+	This is a convenience function defining the range of valid values
+	in one go; setting the \a minimum and \a maximum values for the
+	given \a property with a single function call.
+
+	When setting a new range, the current value is adjusted if
+	necessary (ensuring that the value remains within range).
+
+	\sa setMinimum(), setMaximum(), rangeChanged()
+*/
+void IntPropertyManager::setRange(PropertySheet* property, int minVal, int maxVal)
+{
+	void (IntPropertyManagerPrivate:: * setSubPropertyRange)(PropertySheet*, int, int, int) = 0;
+	setBorderValues<int, IntPropertyManagerPrivate, IntPropertyManager, int>(this, d_ptr.data(),
+		&IntPropertyManager::propertyChanged,
+		&IntPropertyManager::valueChanged,
+		&IntPropertyManager::rangeChanged,
+		property, minVal, maxVal, setSubPropertyRange);
+}
+
+/*!
+	Sets the step value for the given \a property to \a step.
+
+	The step is typically used to increment or decrement a property value while pressing an arrow key.
+
+	\sa singleStep()
+*/
+void IntPropertyManager::setSingleStep(PropertySheet* property, int step)
+{
+	const IntPropertyManagerPrivate::PropertyValueMap::iterator it = d_ptr->m_values.find(property);
+	if (it == d_ptr->m_values.end())
+		return;
+
+	IntPropertyManagerPrivate::Data data = it.value();
+
+	if (step < 0)
+		step = 0;
+
+	if (data.singleStep == step)
+		return;
+
+	data.singleStep = step;
+
+	it.value() = data;
+
+	emit singleStepChanged(property, data.singleStep);
+}
+
+/*!
+	\reimp
+*/
+void IntPropertyManager::initializeProperty(PropertySheet* property)
+{
+	Q_D(IntPropertyManager);
+	d->m_values[property] = IntPropertyManagerPrivate::Data();
+}
+
+/*!
+	\reimp
+*/
+void IntPropertyManager::uninitializeProperty(PropertySheet* property)
+{
+	Q_D(IntPropertyManager);
+	d->m_values.remove(property);
+}

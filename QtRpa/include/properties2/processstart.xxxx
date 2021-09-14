@@ -1,0 +1,32 @@
+#pragma once
+#include "composite_property.h"
+namespace shelllet {
+	namespace properties {
+	class ProcessStartPrivate;
+		class ProcessStart : public CompositeProperty
+		{
+			Q_OBJECT
+			Q_DECLARE_PRIVATE(ProcessStart)
+				Q_PROPERTY(String fileName READ fileName WRITE setFileName)
+		public:
+			Q_INVOKABLE ProcessStart(const pugi::xml_node& node, QObject* parent = nullptr);
+			void setFileName(const String& fileName);
+			void setParameters(const QStringList& parameters);
+			void setWorkingDirectory(const QString& workingDirectory);
+
+			String fileName() const;
+			QStringList parameters() const;
+			QString workingDirectory() const;
+
+			int getPropertyMetaTypeID() const override;
+			//std::unique_ptr<pugi::xml_document> getNode() override;
+
+			void getCode(std::ostringstream& oss) override;
+
+
+			//std::string getImport() const override;
+
+		};
+	}
+}
+Q_DECLARE_METATYPE(shelllet::properties::ProcessStart*)

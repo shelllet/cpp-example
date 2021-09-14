@@ -1,0 +1,34 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class TimePropertyManagerPrivate;
+        class TimePropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(TimePropertyManager)
+        public:
+            TimePropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			TimePropertyManager(QObject* parent = 0);
+			~TimePropertyManager();
+
+			QTime value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QTime& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QTime& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtTimePropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtTimePropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtTimePropertyManager)
+        protected:
+            TimePropertyManager(TimePropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

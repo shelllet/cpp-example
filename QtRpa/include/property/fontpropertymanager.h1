@@ -1,0 +1,45 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class FontPropertyManagerPrivate;
+        class FontPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(FontPropertyManager)
+        public:
+            FontPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			QtFontPropertyManager(QObject* parent = 0);
+			~QtFontPropertyManager();
+
+			QtIntPropertyManager* subIntPropertyManager() const;
+			QtEnumPropertyManager* subEnumPropertyManager() const;
+			QtBoolPropertyManager* subBoolPropertyManager() const;
+
+			QFont value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QFont& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QFont& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			QIcon valueIcon(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+		//	QScopedPointer<QtFontPropertyManagerPrivate> d_ptr;
+		//	Q_DECLARE_PRIVATE(QtFontPropertyManager)
+		//		Q_DISABLE_COPY_MOVE(QtFontPropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotIntChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotEnumChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotBoolChanged(PropertySheet*, bool))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+				Q_PRIVATE_SLOT(d_func(), void slotFontDatabaseChanged())
+				Q_PRIVATE_SLOT(d_func(), void slotFontDatabaseDelayedChange())
+        protected:
+            FontPropertyManager(FontPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

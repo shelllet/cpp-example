@@ -1,0 +1,41 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class RectPropertyManagerPrivate;
+        class RectPropertyManager : public AbstractPropertyManager , private boost::noncopyable{
+            Q_DECLARE_PRIVATE(RectPropertyManager)
+        public:
+            RectPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			RectPropertyManager(QObject* parent = 0);
+			~RectPropertyManager();
+
+			QtDoublePropertyManager* subIntPropertyManager() const;
+
+			QRectF value(const PropertySheet* property) const;
+			QRectF constraint(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QRectF& val);
+			void setConstraint(PropertySheet* property, const QRectF& constraint);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QRectF& val);
+			void constraintChanged(PropertySheet* property, const QRectF& constraint);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+		//	QScopedPointer<QtRectPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtRectPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtRectPropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotIntChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+        protected:
+            RectPropertyManager(RectPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

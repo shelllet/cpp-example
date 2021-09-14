@@ -1,0 +1,19 @@
+#include "property/keysequencepropertymanager.h"
+#include "property/private/keysequencepropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+KeySequencePropertyManager::KeySequencePropertyManager(Object* parent /*= nullptr*/)
+    :KeySequencePropertyManager(*new KeySequencePropertyManagerPrivate, parent)
+{
+
+}
+KeySequencePropertyManager::KeySequencePropertyManager(KeySequencePropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

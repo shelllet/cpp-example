@@ -1,0 +1,149 @@
+#include "interpreter/framework.h"
+#include "interpreter/keyboard.h"
+#include "qt_windows.h"
+namespace shelllet {
+	namespace interpreter {
+
+
+		class KeyboardPrivate : public ObjectPrivate {
+
+			std::pair<HHOOK, v8::Persistent<v8::Function, v8::CopyablePersistentTraits<v8::Function>>> Keyboard::hhk;
+		};
+	}
+
+
+}
+
+shelllet::interpreter::Keyboard::Keyboard(const v8::FunctionCallbackInfo<v8::Value>& args)
+	: Keyboard(*KeyboardPrivate)
+{
+}
+
+shelllet::interpreter::Keyboard::Keyboard(KeyboardPrivate& d)
+	: Object(d, nullptr)
+{
+
+}
+
+
+LPINPUT shelllet::interpreter::Keyboard::SendInput(WORD wVk, BOOL u)
+{
+	LPINPUT input = new INPUT{ 0 };
+
+	input->type = INPUT_KEYBOARD;
+	input->ki.wScan = u ? wVk : 0;
+	input->ki.time = 0;
+	input->ki.dwExtraInfo = 0;
+
+	input->ki.dwFlags = u ? KEYEVENTF_UNICODE : 0;
+	input->ki.wVk = u ? 0 : wVk;
+
+	if (Invoke<&::SendInput>(1, input, sizeof(INPUT)) == 0)
+		return nullptr;
+
+	return input;
+}
+
+UINT shelllet::interpreter::Keyboard::Release(LPINPUT input)
+{
+	if (!input)
+		return 0;
+
+	if (input->ki.dwFlags & KEYEVENTF_UNICODE) {
+		input->ki.dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP;
+	}
+	else {
+		input->ki.dwFlags = KEYEVENTF_KEYUP;
+	}
+
+	BOOST_SCOPE_EXIT(input) {
+		delete input;
+	}BOOST_SCOPE_EXIT_END
+
+		return Invoke<&::SendInput>(1, input, sizeof(INPUT));
+}
+
+void shelllet::interpreter::Keyboard::SendText(const std::wstring& text)
+{
+	std::for_each(text.begin(), text.end(), [](wchar_t ch) {
+		Release(SendInput(ch, TRUE));
+	});
+}
+
+SHORT shelllet::interpreter::Keyboard::KeyCode(char ch)
+{
+	return Invoke<&::VkKeyScanExA>(ch, GetKeyboardLayout(0));
+}
+
+void shelllet::interpreter::Keyboard::Simulate(const std::vector<WORD>& wVks)
+{
+	std::stack<LPINPUT> inputs;
+	std::random_device gen;
+	std::uniform_int_distribution<> dist{ 50, 150 };
+
+	for (auto& k : wVks) {
+		inputs.push(SendInput(k, FALSE));
+		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
+	}
+
+	while (!inputs.empty()) {
+		LPINPUT input = inputs.top();
+		Release(input);
+		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
+		inputs.pop();
+	}
+}
+
+std::string shelllet::interpreter::Keyboard::KeyName(WORD wVk)
+{
+	UINT wScan = Invoke<&::MapVirtualKey>(wVk, MAPVK_VK_TO_VSC);
+	std::vector<wchar_t> buffer(0xff, '\0');
+
+	switch (wVk) {
+	case VK_LEFT: case VK_UP: case VK_RIGHT: case VK_DOWN:
+	case VK_RCONTROL: case VK_RMENU:
+	case VK_LWIN: case VK_RWIN: case VK_APPS:
+	case VK_PRIOR: case VK_NEXT:
+	case VK_END: case VK_HOME:
+	case VK_INSERT: case VK_DELETE:
+	case VK_DIVIDE:
+	case VK_NUMLOCK:
+		wScan |= KF_EXTENDED;
+	default:
+		Invoke<&::GetKeyNameTextW>(wScan << 16, buffer.data(), 0xff);
+	}
+
+	return std::string(buffer.begin(), buffer.end());
+}
+
+void shelllet::interpreter::Keyboard::InstallHook(const v8::Local<v8::Function>& fn)
+{
+	if (Keyboard::hhk.first && !Invoke<&::UnhookWindowsHookEx>(Keyboard::hhk.first))
+		return;
+
+	Keyboard::hhk = std::make_pair(Invoke<&::SetWindowsHookEx>(WH_KEYBOARD_LL, [](int nCode, WPARAM wParam, LPARAM lParam) -> LRESULT
+	{
+		v8::Isolate* isolate = v8::Isolate::GetCurrent();
+		//V8_CREATE_LOCAL_LOCKER_CONTEXT_BY_ISOLATE(isolate)
+		{
+			if (nCode == HC_ACTION)
+			{
+				if (!Keyboard::hhk.second.IsEmpty())
+				{
+					v8::Local<v8::Value> argv[] = { v8::Int32::New(isolate, wParam),  Keyboard::Convert(context, reinterpret_cast<LPKBDLLHOOKSTRUCT>(lParam)) };
+					Keyboard::hhk.second.Get(isolate)->Call(context, context->Global(), std::size(argv), argv);
+				}
+			}
+
+			return ::CallNextHookEx(NULL, nCode, wParam, lParam);
+		}
+		//	V8_CREATE_LOCAL_CONTEXT_END
+	}, ::GetModuleHandle(NULL), 0), v8::Persistent<v8::Function, v8::CopyablePersistentTraits<v8::Function>>(isolate, fn));
+}
+
+BOOL shelllet::interpreter::Keyboard::RemoveHook()
+{
+	auto ret = Invoke<&::UnhookWindowsHookEx>(Keyboard::hhk.first);
+	Keyboard::hhk.first = nullptr;
+	return ret;
+}

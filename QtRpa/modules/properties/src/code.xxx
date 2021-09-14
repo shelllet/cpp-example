@@ -1,0 +1,120 @@
+#include "properties/code.h"
+#include "properties.hpp"
+#include "properties/private/code_p.h"
+#include "property_browser/qteditorfactory.h"
+#include "qjsonobject.h"
+#include "qjsondocument.h"
+#include "quuid.h"
+#include "common.hpp"
+shelllet::properties::Code::Code(const pugi::xml_node& node /*= pugi::xml_node()*/, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new CodePrivate, node, parent)
+
+{
+	Q_D(Code);
+
+	//d->m_displayName = "Start";
+	//d->dtype_ = DiagramType::StartEnd;
+	//d->tagName = "start";
+
+	d->code = node.child_value();
+}
+
+void shelllet::properties::Code::setCode(const String& filename)
+{
+	Q_D(Code);
+	d->code = filename;
+}
+
+void shelllet::properties::Code::getCode(std::ostringstream& oss)
+{
+
+	Q_D(Code);
+	oss << d->code;
+}
+
+
+
+void shelllet::properties::Code::getDefines(std::ostringstream& oss)
+{
+	Q_D(Code);
+}
+
+
+
+
+//QByteArray shelllet::properties::Print::toData() const
+//{
+//	Q_D(Print);
+//	std::stringbuf string_buf;
+//	boost::archive::binary_oarchive oa(string_buf);
+//	oa << d;
+//	std::string buf = string_buf.str();
+//	return QByteArray(buf.c_str(), buf.size());
+//}
+//
+//void shelllet::properties::Print::fromData(const QByteArray& data)
+//{
+//	Q_D(Print);
+//	std::stringbuf string_buf(data.constData());
+//	boost::archive::binary_iarchive oi(string_buf);
+//
+//	oi >> d;
+//}
+
+//std::unique_ptr<pugi::xml_document> shelllet::properties::Code::getNode()
+//{
+//	Q_D(Code);
+//
+//	auto doc = __super::getNode();
+//
+//
+//	doc->document_element().append_child(pugi::node_pcdata).set_value(d->code.toStdString().c_str());
+//
+//
+//	return doc;
+//}
+
+
+
+String shelllet::properties::Code::code() const
+{
+	Q_D(const Code);
+	return d->code;
+}
+
+//void shelllet::properties::print::toXml(pugi::xml_node& node)
+//{
+//	UniqueNamedProperty::toXml(node);
+//	node.append_attribute("message") = message_.c_str();
+//}
+
+//void shelllet::properties::print::fromXml(const pugi::xml_node& node)
+//{
+//	UniqueNamedProperty::fromXml(node);
+//	message_ = node.attribute("message").value();
+//}
+
+QtProperty* shelllet::properties::Code::getInput(QtTreePropertyBrowser* browser)
+{
+	Q_D(Code);
+	auto* input = __super::getInput(browser);
+
+	QtLineEditFactory* lineEdit = new QtLineEditFactory();
+	QtStringPropertyManager* strManager = new QtStringPropertyManager();
+
+	QtProperty* imports = strManager->addProperty(tr("Imports"));
+	input->addSubProperty(imports);
+	strManager->setValue(imports, d->import.toQString());
+
+	connect(strManager, &QtStringPropertyManager::valueChanged, [d](QtProperty* property, const QString& val) {
+		d->import = String::fromQString(val);
+	});
+
+	browser->setFactoryForManager(strManager, lineEdit);
+	return input;
+
+
+	return nullptr;
+}
+
+//#include "moc_print.cpp"

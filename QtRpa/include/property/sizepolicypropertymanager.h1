@@ -1,0 +1,40 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class SizePolicyPropertyManagerPrivate;
+        class SizePolicyPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(SizePolicyPropertyManager)
+        public:
+            SizePolicyPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			QtSizePolicyPropertyManager(QObject* parent = 0);
+			~QtSizePolicyPropertyManager();
+
+			QtIntPropertyManager* subIntPropertyManager() const;
+			QtEnumPropertyManager* subEnumPropertyManager() const;
+
+			QSizePolicy value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QSizePolicy& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QSizePolicy& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtSizePolicyPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtSizePolicyPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtSizePolicyPropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotIntChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotEnumChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+        protected:
+            SizePolicyPropertyManager(SizePolicyPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

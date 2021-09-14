@@ -1,0 +1,63 @@
+#include "properties.hpp"
+#include "properties/network_udp_client.h"
+#include "properties/private/network_udp_client_p.h"
+
+
+shelllet::properties::NetworkUDPClient::NetworkUDPClient(const pugi::xml_node& node, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new NetworkUDPClientPrivate, node, parent)
+{
+}
+
+void shelllet::properties::NetworkUDPClient::setCode(const QString& code)
+{
+	Q_D(NetworkUDPClient);
+	d->m_code = code;
+}
+
+QString shelllet::properties::NetworkUDPClient::getCode() const
+{
+	Q_D(const NetworkUDPClient);
+	return d->m_code;
+}
+
+void shelllet::properties::NetworkUDPClient::setIP(const QString& ip)
+{
+	Q_D(NetworkUDPClient);
+	d->m_ip = ip;
+}
+
+QString shelllet::properties::NetworkUDPClient::getIP() const
+{
+	Q_D(const NetworkUDPClient);
+	return d->m_ip;
+}
+
+int16_t shelllet::properties::NetworkUDPClient::getPort() const
+{
+	Q_D(const NetworkUDPClient);
+	return d->m_port;
+}
+
+void shelllet::properties::NetworkUDPClient::setPort(int16_t port)
+{
+	Q_D(NetworkUDPClient);
+	d->m_port = port;
+}
+
+QString shelllet::properties::NetworkUDPClient::getOutputVariable() const
+{
+	Q_D(const NetworkUDPClient);
+	return d->m_outputVariable;
+}
+
+void shelllet::properties::NetworkUDPClient::setOutputVariable(const QString& variable)
+{
+	Q_D(NetworkUDPClient);
+	d->m_outputVariable = variable;
+}
+
+int shelllet::properties::NetworkUDPClient::getPropertyMetaTypeID() const
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+

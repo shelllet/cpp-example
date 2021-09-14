@@ -1,0 +1,102 @@
+#include "common.hpp"
+#include "properties.hpp"
+#include "properties/print.h"
+#include "properties/private/print_p.h"
+#include "property_browser/qteditorfactory.h"
+#include "qjsonobject.h"
+#include "qjsondocument.h"
+#include "quuid.h"
+shelllet::properties::Print::Print(const pugi::xml_node& node, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new PrintPrivate, node, parent)
+
+{
+	Q_D(Print);
+	d->message_ = node.attribute("message").value();
+	d->id = QUuid::createUuid().toString(QUuid::Id128);
+}
+
+
+
+void shelllet::properties::Print::getCode(std::ostringstream& oss)
+{
+	Q_D(Print);
+	oss << "__print.print(" << tagName() << "_" << d->id << ".message)" << std::endl;
+}
+
+
+//std::string shelllet::properties::Print::getImport() const
+//{
+//	return "";
+//}
+
+void shelllet::properties::Print::getDefines(std::ostringstream& oss)
+{
+	Q_D(Print);
+	QJsonObject object;
+	object["message"] = d->message_;
+	QJsonDocument document(object);
+	oss << "var " << tagName() << "_" << d->id << " = " << document.toJson().constData() << std::endl;
+}
+
+
+//QByteArray shelllet::properties::Print::toData() const
+//{
+//	Q_D(Print);
+//	std::stringbuf string_buf;
+//	boost::archive::binary_oarchive oa(string_buf);
+//	oa << d;
+//	std::string buf = string_buf.str();
+//	return QByteArray(buf.c_str(), buf.size());
+//}
+//
+//void shelllet::properties::Print::fromData(const QByteArray& data)
+//{
+//	Q_D(Print);
+//	std::stringbuf string_buf(data.constData());
+//	boost::archive::binary_iarchive oi(string_buf);
+//
+//	oi >> d;
+//}
+//
+//std::unique_ptr<pugi::xml_document> shelllet::properties::Print::getNode()
+//{
+//	Q_D(Print);
+//	auto doc = __super::getNode();
+//	doc->document_element().append_attribute("message") = d->message_.toUtf8().constData();
+//	return doc;
+//}
+
+//void shelllet::properties::print::toXml(pugi::xml_node& node)
+//{
+//	UniqueNamedProperty::toXml(node);
+//	node.append_attribute("message") = message_.c_str();
+//}
+
+//void shelllet::properties::print::fromXml(const pugi::xml_node& node)
+//{
+//	UniqueNamedProperty::fromXml(node);
+//	message_ = node.attribute("message").value();
+//}
+
+QtProperty* shelllet::properties::Print::getInput(QtTreePropertyBrowser* browser)
+{
+	Q_D(Print);
+	QtLineEditFactory* lineEdit = new QtLineEditFactory();
+	QtStringPropertyManager* strManager = new QtStringPropertyManager();
+
+	QtProperty* display = strManager->addProperty(tr("Message"));
+
+	auto* input = CompositeProperty::getInput(browser);
+	input->addSubProperty(display);
+
+	strManager->setValue(display, d->message_);
+
+	connect(strManager, &QtStringPropertyManager::valueChanged, [d](QtProperty* property, const QString& val) {
+		d->message_ = val;
+		});
+
+	browser->setFactoryForManager(strManager, lineEdit);
+	return input;
+}
+
+//#include "moc_print.cpp"

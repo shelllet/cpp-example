@@ -1,0 +1,29 @@
+#pragma once
+namespace shelllet {
+	namespace interpreter {
+		class WinApiPrivate;
+		class WinApi : public Object {
+			Q_DECLARE_PRIVATE(WinApi)
+		public:
+			static HWND FindWindow(const String& windowName, const String& className);
+
+			static bool MouseClick(HWND hWnd, const Point<int32_t>& point);
+
+			static bool CloseWindow(HWND hWnd);
+
+			static HWND GetDesktopWindow();
+
+			static Bool EnumWindows(const std::function<Bool(HWND)>& cb);
+
+			static BOOL EnumChildWindows(HWND hWnd, const std::function<BOOL(HWND)>& cb);
+
+			static std::wstring  GetWindowTitle(HWND hWnd);
+
+			static BOOL SetForegroundWindow(HWND hWnd);
+
+			static Image GrabDesktop(const Rect<Int32>& rc);
+
+			static Image GrabWindow(HWND hWnd, const Rect<Int32>& rect);
+		};
+	}
+}

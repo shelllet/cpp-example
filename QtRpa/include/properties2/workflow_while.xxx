@@ -1,0 +1,14 @@
+#pragma once
+#include "composite_property.h"
+namespace shelllet {
+	namespace properties {
+		class WorkflowWhilePrivate;
+		class WorkflowWhile : public CompositeProperty
+		{
+			Q_DECLARE_PRIVATE(WorkflowWhile)
+		public:
+			WorkflowWhile(const pugi::xml_node& node, QObject* parent = nullptr);
+		};
+	}
+}
+Q_DECLARE_METATYPE(shelllet::properties::WorkflowWhile*)

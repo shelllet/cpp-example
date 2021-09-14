@@ -1,0 +1,24 @@
+#pragma once
+#include "composite_property.h"
+namespace shelllet {
+	namespace properties {
+		class WorkflowAssignPrivate;
+		class WorkflowAssign : public CompositeProperty
+		{
+			Q_DECLARE_PRIVATE(WorkflowAssign)
+		public:
+			WorkflowAssign(const pugi::xml_node& node, QObject* parent = nullptr);
+
+			QString varName() const;
+			void setVarName(const QString& val);
+			QVariant varValue() const;
+			void setVarValue(const QVariant& val);
+
+			int getPropertyMetaTypeID() const override;
+
+		private:
+		
+		};
+	}
+}
+Q_DECLARE_METATYPE(shelllet::properties::WorkflowAssign*)

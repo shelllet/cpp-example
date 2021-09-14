@@ -1,0 +1,39 @@
+#include "properties.hpp"
+#include "properties/network_send.h"
+#include "properties/private/network_send_p.h"
+#include "qwidget.h"
+
+
+shelllet::properties::NetworkSend::NetworkSend(const pugi::xml_node& node, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new CompositePropertyPrivate, node, parent)
+{
+}
+void shelllet::properties::NetworkSend::setData(const QString& data)
+{
+	Q_D(NetworkSend);
+	d->m_data = data;
+}
+
+QString shelllet::properties::NetworkSend::getData() const
+{
+	Q_D(const NetworkSend);
+	return d->m_data;
+}
+
+void shelllet::properties::NetworkSend::setOwner(const QString& owner)
+{
+	Q_D(NetworkSend);
+	d->m_owner = owner;
+}
+
+QString shelllet::properties::NetworkSend::getOwner() const
+{
+	Q_D(const NetworkSend);
+	return d->m_owner;
+}
+
+int shelllet::properties::NetworkSend::getPropertyMetaTypeID() const
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+

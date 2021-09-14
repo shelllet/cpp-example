@@ -1,0 +1,19 @@
+#include "property/pointpropertymanager.h"
+#include "property/private/pointpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+PointPropertyManager::PointPropertyManager(Object* parent /*= nullptr*/)
+    :PointPropertyManager(*new PointPropertyManagerPrivate, parent)
+{
+
+}
+PointPropertyManager::PointPropertyManager(PointPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

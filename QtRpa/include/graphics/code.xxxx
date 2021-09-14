@@ -1,0 +1,23 @@
+#pragma once
+#include "elementitem.h"
+namespace shelllet {
+	namespace graphics {
+		class CodePrivate;
+		class Code : public ElementItem {
+			Q_OBJECT
+				Q_DECLARE_PRIVATE_D(Object::d_ptr, Code)
+
+		
+
+		public:
+			Q_INVOKABLE	Code(const std::shared_ptr<CompositeProperty>& property, QGraphicsItem* parent = 0);
+			~Code();
+
+			bool eventFilter(QObject* watched, QEvent* event) override;
+
+		};
+	}
+}
+
+
+Q_DECLARE_METATYPE(shelllet::graphics::Code*)

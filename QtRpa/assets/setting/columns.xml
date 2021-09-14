@@ -1,0 +1,6 @@
+<table_setting>
+    <columns>
+        <column columnId="1" name="ID" width="50"/>
+        <column columnId="2" name="Artist" width="150"/>
+    </columns>
+</table_setting>

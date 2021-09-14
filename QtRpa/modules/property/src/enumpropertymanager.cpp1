@@ -1,0 +1,19 @@
+#include "property/enumpropertymanager.h"
+#include "property/private/enumpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+EnumPropertyManager::EnumPropertyManager(Object* parent /*= nullptr*/)
+    :EnumPropertyManager(*new EnumPropertyManagerPrivate, parent)
+{
+
+}
+EnumPropertyManager::EnumPropertyManager(EnumPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

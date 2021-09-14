@@ -1,0 +1,47 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class SizePropertyManagerPrivate;
+        class SizePropertyManager : public AbstractPropertyManager, boost::noncopyable {
+            Q_DECLARE_PRIVATE(SizePropertyManager)
+        public:
+            SizePropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			SizePropertyManager(QObject* parent = 0);
+			~SizePropertyManager();
+
+			QtDoublePropertyManager* subDoublePropertyManager() const;
+
+			QSizeF value(const PropertySheet* property) const;
+			QSizeF minimum(const PropertySheet* property) const;
+			QSizeF maximum(const PropertySheet* property) const;
+			int decimals(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QSizeF& val);
+			void setMinimum(PropertySheet* property, const QSizeF& minVal);
+			void setMaximum(PropertySheet* property, const QSizeF& maxVal);
+			void setRange(PropertySheet* property, const QSizeF& minVal, const QSizeF& maxVal);
+			void setDecimals(PropertySheet* property, int prec);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QSizeF& val);
+			void rangeChanged(PropertySheet* property, const QSizeF& minVal, const QSizeF& maxVal);
+			void decimalsChanged(PropertySheet* property, int prec);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtSizeFPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtSizeFPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtSizeFPropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotDoubleChanged(PropertySheet*, double))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+        protected:
+            SizePropertyManager(SizePropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

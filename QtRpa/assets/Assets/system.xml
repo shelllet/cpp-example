@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<system display="system">
+
+  <process_start category="system" meta="ProcessStartView" display="Start Process"></process_start>
+
+  <file_delete category="system" meta="FileDeleteView" display="File delete" icon ="about"></file_delete>
+
+</system>

@@ -1,0 +1,41 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class EnumPropertyManagerPrivate;
+        class EnumPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(EnumPropertyManager)
+        public:
+            EnumPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			EnumPropertyManager(QObject* parent = 0);
+			~EnumPropertyManager();
+
+			int value(const PropertySheet* property) const;
+			QStringList enumNames(const PropertySheet* property) const;
+			QMap<int, QIcon> enumIcons(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, int val);
+			void setEnumNames(PropertySheet* property, const QStringList& names);
+			void setEnumIcons(PropertySheet* property, const QMap<int, QIcon>& icons);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, int val);
+			void enumNamesChanged(PropertySheet* property, const QStringList& names);
+			void enumIconsChanged(PropertySheet* property, const QMap<int, QIcon>& icons);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			QIcon valueIcon(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+		//	QScopedPointer<QtEnumPropertyManagerPrivate> d_ptr;
+		//	Q_DECLARE_PRIVATE(QtEnumPropertyManager)
+		//		Q_DISABLE_COPY_MOVE(QtEnumPropertyManager)
+        protected:
+            EnumPropertyManager(EnumPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

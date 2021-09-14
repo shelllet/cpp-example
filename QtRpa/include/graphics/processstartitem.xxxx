@@ -1,0 +1,23 @@
+#pragma once
+#include "graphics/elementitem.h"
+#include "common.hpp"
+#include "properties.hpp"
+#include "qgraphicswidget.h"
+namespace shelllet {
+	namespace graphics {
+		class ProcessStartPrivate;
+		class ProcessStart : public ElementItem {
+			Q_OBJECT
+				Q_DECLARE_PRIVATE_D(Object::d_ptr, ProcessStart)
+		public:
+			Q_INVOKABLE	ProcessStart(const std::shared_ptr<CompositeProperty>& property, QGraphicsItem* parent = 0);
+		protected:
+
+	
+
+		private:
+
+		};
+	}
+}
+Q_DECLARE_METATYPE(shelllet::graphics::ProcessStart*)

@@ -1,0 +1,285 @@
+#include "interpreter/framework.h"
+#include "interpreter/win.h"
+//#include "interpreter/winapi.h"
+#include <d3d11.h>
+#include <wrl.h>
+#include <dxgi1_6.h>
+#include <tlhelp32.h>
+#include <qguiapplication.h>
+#include <qscreen.h>
+
+namespace shelllet {
+	namespace interpreter {
+		class WinApiPrivate : public ObjectPrivate {
+
+		};
+	}
+}
+
+HWND shelllet::interpreter::WinApi::FindWindow(const String& windowName, const String& className)
+{
+	return Invoke<&::FindWindowW>(className.isEmpty() ? nullptr : reinterpret_cast<LPCWSTR>(className.data()),
+		windowName.isEmpty() ? nullptr : reinterpret_cast<LPCWSTR>(windowName.data()));
+}
+
+bool shelllet::interpreter::WinApi::MouseClick(HWND hWnd, const Point<int32_t>& point)
+{
+	LPARAM lParam = MAKELPARAM(point.x(), point.y());
+	if (HRESULT hr = Invoke<&::SendMessage>(hWnd, WM_LBUTTONDOWN, MK_LBUTTON, lParam); SUCCEEDED(hr)) {
+		std::random_device gen;
+		std::uniform_int_distribution<> dist{ 10, 50 };
+		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
+		if (hr = Invoke<&::SendMessage>(hWnd, WM_LBUTTONUP, 0, lParam); SUCCEEDED(hr))
+			return true;
+	}
+	return false;
+}
+
+bool shelllet::interpreter::WinApi::CloseWindow(HWND hWnd)
+{
+	if (HRESULT hr = Invoke<&::SendMessage>(hWnd, WM_SYSCOMMAND, SC_CLOSE, NULL); SUCCEEDED(hr)) {
+		if (hr = Invoke<&::SendMessage>(hWnd, WM_CLOSE, NULL, NULL); SUCCEEDED(hr))
+			return true;
+	}
+	return false;
+}
+
+HWND shelllet::interpreter::WinApi::GetDesktopWindow()
+{
+	return Invoke<&::GetDesktopWindow>();
+}
+
+Bool shelllet::interpreter::WinApi::EnumWindows(const std::function<Bool(HWND)>& cb)
+{
+	return Invoke<&::EnumWindows>([](HWND hWnd, LPARAM lParam) ->BOOL {
+		auto* f = reinterpret_cast<std::function<BOOL(HWND)>*>(lParam);
+		return (*f)(hWnd);
+	}, reinterpret_cast<LPARAM>(&cb));
+}
+
+BOOL shelllet::interpreter::WinApi::EnumChildWindows(HWND hWnd, const std::function<BOOL(HWND)>& cb)
+{
+	return Invoke<&::EnumChildWindows>(hWnd, [](HWND hWnd, LPARAM lParam) ->BOOL {
+		auto* f = reinterpret_cast<std::function<BOOL(HWND)>*>(lParam);
+		return (*f)(hWnd);
+	}, reinterpret_cast<LPARAM>(&cb));
+}
+
+std::wstring shelllet::interpreter::WinApi::GetWindowTitle(HWND hWnd)
+{
+	std::wstring ws;
+	if (auto size = ::GetWindowTextLengthW(hWnd); size != 0) {
+		//	auto size = len + sizeof(wchar_t); // * sizeof(wchar_t);
+		std::vector<wchar_t> buf(size, '\0');
+		::GetWindowTextW(hWnd, buf.data(), size);
+		ws = std::wstring(buf.begin(), buf.begin() + size);
+	}
+	return ws;
+}
+
+BOOL shelllet::interpreter::WinApi::SetForegroundWindow(HWND hWnd)
+{
+	UINT_PTR timeout = 0;
+	HWND hWndForeground = Invoke<&::GetForegroundWindow>();
+	DWORD currentThreadID = Invoke<&::GetCurrentThreadId>(),
+		windowThreadID = Invoke<&::GetWindowThreadProcessId>(hWndForeground, nullptr);
+
+	if (currentThreadID != windowThreadID)
+	{
+		Invoke<&::AttachThreadInput>(currentThreadID, windowThreadID, TRUE);
+		Invoke<&::SystemParametersInfoA>(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, &timeout, 0);
+		Invoke<&::SystemParametersInfoA>(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, nullptr, SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+		Invoke<&::AllowSetForegroundWindow>(ASFW_ANY);
+	}
+
+	BOOL ret = Invoke<&::SetForegroundWindow>(hWnd);
+
+	if (currentThreadID != windowThreadID)
+	{
+		Invoke<&::SystemParametersInfoA>(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, LPVOID(timeout), SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+		Invoke<&::AttachThreadInput>(currentThreadID, windowThreadID, FALSE);
+	}
+
+	return ret;
+}
+
+Image shelllet::interpreter::WinApi::GrabDesktop(const Rect<Int32>& rect)
+{
+	using namespace Microsoft::WRL;
+	const int kAcquireTimeoutMs = 10;
+	Rect<Int32> availableRect = rect;
+	if (!rect.isEmpty()) {
+		auto temp = qGuiApp->primaryScreen()->availableGeometry();
+		availableRect = { static_cast<const QRect*>(&temp) };
+	}
+	else if (!rect.isValid()) {
+		throw std::logic_error("invalid rect.");
+	}
+
+	ComPtr<ID3D11Device> device;
+	ComPtr<IDXGIOutputDuplication> duplication;
+	ComPtr<ID3D11DeviceContext> context;
+	ComPtr<IDXGIFactory1> factory;
+
+	CreateDXGIFactory1(__uuidof(IDXGIFactory1), &factory);
+
+	std::vector<ComPtr<IDXGIAdapter1>> adapters;
+	HRESULT hr = NOERROR;
+
+	int i = 0;
+	ComPtr<IDXGIAdapter1> adapter;
+	while (factory->EnumAdapters1(i, &adapter) != DXGI_ERROR_NOT_FOUND) {
+		adapters.push_back(adapter);
+		++i;
+	}
+
+	for (auto& adapter : adapters)
+	{
+		D3D_FEATURE_LEVEL feature[] = {
+			D3D_FEATURE_LEVEL_9_1,
+			D3D_FEATURE_LEVEL_9_2,
+			D3D_FEATURE_LEVEL_9_3,
+			D3D_FEATURE_LEVEL_10_0,
+			D3D_FEATURE_LEVEL_10_1,
+			D3D_FEATURE_LEVEL_11_0,
+			D3D_FEATURE_LEVEL_11_1,
+			D3D_FEATURE_LEVEL_12_0,
+			D3D_FEATURE_LEVEL_12_1
+		};
+
+		hr = D3D11CreateDevice(
+			adapter.Get(),
+			D3D_DRIVER_TYPE_UNKNOWN,       // There is no need to create a real hardware device.
+			NULL,
+			D3D11_CREATE_DEVICE_SINGLETHREADED,  // Check for the SDK layers.
+			feature,                    // Any feature level will do.
+			_countof(feature),
+			D3D11_SDK_VERSION,
+			&device,                    // No need to keep the D3D device reference.
+			NULL,                    // No need to know the feature level.
+			&context                     // No need to keep the D3D device context reference.
+		);
+
+		if (FAILED(hr))
+			continue;
+
+		ComPtr<IDXGIOutput> output;
+		ComPtr<IDXGIOutput5> output5;
+
+		i = 0;
+		while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND) {
+			hr = output.As(&output5);
+
+			if (SUCCEEDED(hr)) {
+				DXGI_FORMAT formats[] = { DXGI_FORMAT_B8G8R8A8_UNORM };
+				hr = output5->DuplicateOutput1(device.Get(),
+					0, // Reserved for future use; must be zero.
+					_countof(formats), formats, &duplication);
+
+				if (SUCCEEDED(hr)) {
+					break;
+				}
+			}
+
+			++i;
+		}
+
+		if (duplication) {
+			break;
+		}
+	}
+
+	if (!duplication) {
+		throw std::system_error(hr, std::system_category());
+	}
+
+	DXGI_OUTDUPL_DESC dupDescription;
+	duplication->GetDesc(&dupDescription);
+
+	D3D11_TEXTURE2D_DESC desc;
+
+	// Create CPU access texture
+	desc.Width = dupDescription.ModeDesc.Width;
+	desc.Height = dupDescription.ModeDesc.Height;
+	desc.Format = dupDescription.ModeDesc.Format;
+	desc.ArraySize = 1;
+	desc.BindFlags = 0;
+	desc.MiscFlags = 0;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.MipLevels = 1;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	desc.Usage = D3D11_USAGE_STAGING;
+
+	ComPtr<ID3D11Texture2D> texture;
+
+	hr = device->CreateTexture2D(&desc, NULL, &texture);
+
+	if (FAILED(hr)) {
+		throw std::system_error(hr, std::system_category());
+	}
+
+	DXGI_OUTDUPL_FRAME_INFO frameInfo;
+	ComPtr<IDXGIResource> desktopResource;
+	ComPtr<ID3D11Texture2D> desktopImage;
+	int tryCount = 3;
+	do
+	{
+		std::random_device gen;
+		std::uniform_int_distribution<> dist{ 300, 500 }; // black image
+		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
+
+		hr = duplication->AcquireNextFrame(kAcquireTimeoutMs, &frameInfo, &desktopResource);
+
+		if (SUCCEEDED(hr))
+		{
+			break;
+		}
+		if (hr == DXGI_ERROR_WAIT_TIMEOUT)
+		{
+			continue;
+		}
+		if (FAILED(hr)) {
+			throw std::system_error(hr, std::system_category());
+		}
+	} while (--tryCount > 0);
+
+	BOOST_SCOPE_EXIT(duplication) {
+		duplication->ReleaseFrame();
+	}BOOST_SCOPE_EXIT_END;
+
+	hr = desktopResource.As(&desktopImage);
+	if (FAILED(hr)) {
+		throw std::system_error(hr, std::system_category());
+	}
+
+	const D3D11_BOX region = {
+		static_cast<std::uint32_t> (rect.x()), static_cast<std::uint32_t>(rect.y()),
+		0,
+		static_cast<std::uint32_t>(rect.x() + rect.width()), static_cast<std::uint32_t>(rect.y() + rect.height()),
+		1 };
+
+	UINT subResource = D3D11CalcSubresource(0, 0, 1);
+	// Copy image into CPU access texture
+	context->CopySubresourceRegion(texture.Get(), subResource, 0, 0, 0, desktopImage.Get(), subResource, !rect.isEmpty() ? &region : nullptr);
+	// Copy from CPU access texture to bitmap buffer
+	D3D11_MAPPED_SUBRESOURCE resource;
+
+	hr = context->Map(texture.Get(), subResource, D3D11_MAP_READ_WRITE, 0, &resource);
+	if (FAILED(hr)) {
+		throw std::system_error(hr, std::system_category());
+	}
+
+	BOOST_SCOPE_EXIT(context, texture) {
+		context->Unmap(texture.Get(), 0);
+	}BOOST_SCOPE_EXIT_END;
+
+	//	return { rect.height(), rect.width(), CV_8UC4, (BYTE*)resource.pData, resource.RowPitch };
+	return { (BYTE*)resource.pData,  rect.width(), rect.height() , resource.RowPitch, QImage::Format_RGB32 };
+}
+
+Image shelllet::interpreter::WinApi::GrabWindow(HWND hWnd, const Rect<Int32>& rc)
+{
+	QPixmap pixmap = qGuiApp->primaryScreen()->grabWindow(reinterpret_cast<WId>(hWnd), rc.x(), rc.y(), rc.width(), rc.height());
+	return &pixmap;
+}

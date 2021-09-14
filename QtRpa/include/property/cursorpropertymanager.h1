@@ -1,0 +1,37 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class CursorPropertyManagerPrivate;
+        class CursorPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(CursorPropertyManager)
+        public:
+            CursorPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			CursorPropertyManager(QObject* parent = 0);
+			~CursorPropertyManager();
+
+#ifndef QT_NO_CURSOR
+			QCursor value(const PropertySheet* property) const;
+#endif
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QCursor& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QCursor& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			QIcon valueIcon(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtCursorPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtCursorPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtCursorPropertyManager)
+        protected:
+            CursorPropertyManager(CursorPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

@@ -1,0 +1,26 @@
+#pragma once
+#include "composite_property.h"
+
+namespace shelllet {
+	namespace properties {
+		class NetworkSendPrivate;
+		class NetworkSend : public CompositeProperty
+		{
+			Q_DECLARE_PRIVATE(NetworkSend)
+		public:
+			NetworkSend(const pugi::xml_node& prop, QObject* parent = nullptr);
+			void setData(const QString& data);
+			QString getData() const;
+
+			void setOwner(const QString& owner);
+			QString getOwner() const;
+
+			int getPropertyMetaTypeID() const override;
+
+
+		private:
+		
+		};
+	}
+}
+Q_DECLARE_METATYPE(shelllet::properties::NetworkSend*)

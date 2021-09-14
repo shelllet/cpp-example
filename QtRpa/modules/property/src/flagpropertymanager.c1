@@ -1,0 +1,19 @@
+#include "property/flagpropertymanager.h"
+#include "property/private/flagpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+FlagPropertyManager::FlagPropertyManager(Object* parent /*= nullptr*/)
+    :FlagPropertyManager(*new FlagPropertyManagerPrivate, parent)
+{
+
+}
+FlagPropertyManager::FlagPropertyManager(FlagPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

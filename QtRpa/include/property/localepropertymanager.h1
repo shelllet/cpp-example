@@ -1,0 +1,38 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class LocalePropertyManagerPrivate;
+        class LocalePropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(LocalePropertyManager)
+        public:
+            LocalePropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			LocalePropertyManager(QObject* parent = 0);
+			~LocalePropertyManager();
+
+			QtEnumPropertyManager* subEnumPropertyManager() const;
+
+			QLocale value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QLocale& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QLocale& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtLocalePropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtLocalePropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtLocalePropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotEnumChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+        protected:
+            LocalePropertyManager(LocalePropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

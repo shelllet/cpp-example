@@ -1,0 +1,39 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class PointPropertyManagerPrivate;
+        class PointPropertyManager : public AbstractPropertyManager, boost::noncopyable {
+            Q_DECLARE_PRIVATE(PointPropertyManager)
+        public:
+            PointPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			PointPropertyManager(QObject* parent = 0);
+			~PointPropertyManager();
+
+			QtDoublePropertyManager* subDoublePropertyManager() const;
+
+			QPointF value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QPoint& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QPoint& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtPointPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtPointPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtPointPropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotIntChanged(PropertySheet*, int))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+        protected:
+            PointPropertyManager(PointPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    
+

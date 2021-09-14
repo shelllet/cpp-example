@@ -1,0 +1,43 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class IntPropertyManagerPrivate;
+        class IntPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(IntPropertyManager)
+        public:
+            IntPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			IntPropertyManager(QObject* parent = 0);
+			~IntPropertyManager();
+
+			int value(const PropertySheet* property) const;
+			int minimum(const PropertySheet* property) const;
+			int maximum(const PropertySheet* property) const;
+			int singleStep(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, int val);
+			void setMinimum(PropertySheet* property, int minVal);
+			void setMaximum(PropertySheet* property, int maxVal);
+			void setRange(PropertySheet* property, int minVal, int maxVal);
+			void setSingleStep(PropertySheet* property, int step);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, int val);
+			void rangeChanged(PropertySheet* property, int minVal, int maxVal);
+			void singleStepChanged(PropertySheet* property, int step);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtIntPropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtIntPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtIntPropertyManager)
+        protected:
+            IntPropertyManager(IntPropertyManagerPrivate& d,QObject*parent1, Object*parent = nullptr);
+        };
+    }
+}
+    

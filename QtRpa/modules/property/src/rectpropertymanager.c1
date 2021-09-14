@@ -1,0 +1,19 @@
+#include "property/rectpropertymanager.h"
+#include "property/private/rectpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+RectPropertyManager::RectPropertyManager(Object* parent /*= nullptr*/)
+    :RectPropertyManager(*new RectPropertyManagerPrivate, parent)
+{
+
+}
+RectPropertyManager::RectPropertyManager(RectPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

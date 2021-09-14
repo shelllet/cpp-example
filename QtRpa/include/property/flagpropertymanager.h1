@@ -1,0 +1,41 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class FlagPropertyManagerPrivate;
+		class FlagPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(FlagPropertyManager)
+        public:
+            FlagPropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			FlagPropertyManager(QObject* parent = 0);
+			~FlagPropertyManager();
+
+			QtBoolPropertyManager* subBoolPropertyManager() const;
+
+			int value(const PropertySheet* property) const;
+			QStringList flagNames(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, int val);
+			void setFlagNames(PropertySheet* property, const QStringList& names);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, int val);
+			void flagNamesChanged(PropertySheet* property, const QStringList& names);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+		//	QScopedPointer<QtFlagPropertyManagerPrivate> d_ptr;
+		//	Q_DECLARE_PRIVATE(QtFlagPropertyManager)
+		//		Q_DISABLE_COPY_MOVE(QtFlagPropertyManager)
+				Q_PRIVATE_SLOT(d_func(), void slotBoolChanged(PropertySheet*, bool))
+				Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(PropertySheet*))
+        protected:
+            FlagPropertyManager(FlagPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

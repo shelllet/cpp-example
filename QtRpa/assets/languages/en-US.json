@@ -1,0 +1,23 @@
+{
+    "plugin": {
+        "l1": "Missing parameters or type is mismatch",
+        "l2": "The `%1%`does not exist",
+        "common": {
+            "l3": "The ini file parse failed"
+        }
+    },
+    "model": {
+        "image": {
+            "l1": "Can't find image `%1%`"
+        }
+    },
+    "image": {
+        "l1": "Template image is empty"
+    },
+    "core": {
+        "l2": "String conversion failed",
+        "thread": {
+            "l1": "Thread interrupted"
+        }
+    }
+}

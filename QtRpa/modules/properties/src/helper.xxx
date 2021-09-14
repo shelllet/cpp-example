@@ -1,0 +1,102 @@
+#include "properties/helper.h"
+
+#include "properties/sequence.h"
+#include "properties/print.h"
+#include "properties/code.h"
+#include "properties/filedelete.h"
+#include "properties/processstart.h"
+
+//BOOST_CLASS_EXPORT(shelllet::properties::Print)
+
+
+void shelllet::properties::Helper::register_meta_type()
+{
+	//qRegisterMetaType<Sequence*>();
+	//qRegisterMetaType<Print*>();
+
+	//qRegisterMetaType<Sequence*>();
+	//qRegisterMetaType<Print*>();
+	//qRegisterMetaType<Code*>();
+	//qRegisterMetaType<FileDelete*>();
+	//qRegisterMetaType<ProcessStart*>();
+
+}
+
+//shelllet::properties::tree_property_browser* shelllet::properties::my_plugin_properties::create_tree_property_browser(QWidget* parent)
+//{
+//	throw std::logic_error("The method or operation is not implemented.");
+//}
+//
+//std::unique_ptr<shelllet::properties::CompositeProperty> shelllet::properties::Helper::create_node(const std::string& meta, const std::string& name)
+//{
+//	properties::CompositeProperty* childItem = nullptr;
+//	std::string n = properties::CompositeProperty::Prefix() + "::" + meta + "*";
+//
+//	//LOG_TRACE(__FUNCTION__) << "# record meta: " << n << std::endl;
+//	int id = QMetaType::type(n.c_str());
+//
+//	if (id != QMetaType::UnknownType) {
+//		const auto* meta = QMetaType::metaObjectForType(id);
+//		BOOST_ASSERT(false);
+//		//childItem = dynamic_cast<properties::UniqueNamedProperty*>(meta->newInstance(Q_ARG(std::string, name)));
+//		//childItem->fromXml(node);
+//	}
+//	else {
+//		//		LOG_TRACE(__FUNCTION__) << "# meta type is unknown: " << node.name() << "-" << node.attribute("meta").value() << std::endl;
+//	}
+//
+//	return std::unique_ptr<shelllet::properties::CompositeProperty>(childItem);
+//}
+//
+//std::unique_ptr<shelllet::properties::CompositeProperty> shelllet::properties::Helper::create_node(pugi::xml_node node)
+//{
+//	properties::CompositeProperty* childItem = nullptr;
+//
+//	std::string n = properties::CompositeProperty::prefix() + "::" + node.attribute("meta").value() + "*";
+//
+//	//LOG_TRACE(__FUNCTION__) << "# record meta: " << n << std::endl;
+//	int id = QMetaType::type(n.c_str());
+//
+//	if (id != QMetaType::UnknownType) {
+//		const auto* meta = QMetaType::metaObjectForType(id);
+//		childItem = dynamic_cast<properties::CompositeProperty*>(meta->newInstance(Q_ARG(pugi::xml_node, node)));
+//		//childItem->fromXml(node);
+//	}
+//	else {
+//		//		LOG_TRACE(__FUNCTION__) << "# meta type is unknown: " << node.name() << "-" << node.attribute("meta").value() << std::endl;
+//	}
+//
+//	return std::unique_ptr<shelllet::properties::CompositeProperty>(childItem);
+//}
+
+//std::string shelllet::properties::Helper::toData(const std::shared_ptr<CompositeProperty>& data)
+//{
+//	std::stringbuf string_buf;
+//	boost::archive::binary_oarchive oa(string_buf);
+//	oa << data;
+//
+//	return string_buf.str();
+//}
+//
+//std::shared_ptr<shelllet::properties::CompositeProperty> shelllet::properties::Helper::fromData(const std::string& data)
+//{
+//	std::stringbuf string_buf(data);
+//	boost::archive::binary_iarchive oi(string_buf);
+//	std::shared_ptr<properties::CompositeProperty> prop;
+//
+//	oi >> prop;
+//
+//	return prop;
+//}
+
+std::string shelllet::properties::Helper::toString(const pugi::xml_node& node)
+{
+	std::ostringstream os;
+	node.print(os);
+	return os.str();
+}
+
+std::unique_ptr<shelllet::properties::CompositeProperty> shelllet::properties::Helper::createRoot()
+{
+	return std::move(std::make_unique<Sequence>());
+}

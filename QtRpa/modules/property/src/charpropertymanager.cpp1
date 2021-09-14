@@ -1,0 +1,19 @@
+#include "property/charpropertymanager.h"
+#include "property/private/charpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+CharPropertyManager::CharPropertyManager(Object* parent /*= nullptr*/)
+    :CharPropertyManager(*new CharPropertyManagerPrivate, parent)
+{
+
+}
+CharPropertyManager::CharPropertyManager(CharPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

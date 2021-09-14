@@ -1,0 +1,34 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class KeySequencePropertyManagerPrivate;
+        class KeySequencePropertyManager : public AbstractPropertyManager, boost::noncopyable {
+            Q_DECLARE_PRIVATE(KeySequencePropertyManager)
+        public:
+            KeySequencePropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			KeySequencePropertyManager(QObject* parent = 0);
+			~KeySequencePropertyManager();
+
+			QKeySequence value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QKeySequence& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QKeySequence& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtKeySequencePropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtKeySequencePropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtKeySequencePropertyManager)
+        protected:
+            KeySequencePropertyManager(KeySequencePropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

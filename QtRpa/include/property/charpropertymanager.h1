@@ -1,0 +1,35 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class CharPropertyManagerPrivate;
+        class CharPropertyManager : public AbstractPropertyManager, private boost::noncopyable {
+            Q_DECLARE_PRIVATE(CharPropertyManager)
+        public:
+            CharPropertyManager(Object*parent = nullptr);
+
+			Q_OBJECT
+		public:
+			CharPropertyManager(QObject* parent = 0);
+			~CharPropertyManager();
+
+			QChar value(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QChar& val);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QChar& val);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtCharPropertyManagerPrivate> d_ptr;
+		//	Q_DECLARE_PRIVATE(QtCharPropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtCharPropertyManager)
+        protected:
+            CharPropertyManager(CharPropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

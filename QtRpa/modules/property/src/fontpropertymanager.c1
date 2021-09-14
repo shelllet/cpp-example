@@ -1,0 +1,19 @@
+#include "property/fontpropertymanager.h"
+#include "property/private/fontpropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+FontPropertyManager::FontPropertyManager(Object* parent /*= nullptr*/)
+    :FontPropertyManager(*new FontPropertyManagerPrivate, parent)
+{
+
+}
+FontPropertyManager::FontPropertyManager(FontPropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

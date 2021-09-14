@@ -1,0 +1,40 @@
+#pragma once
+#include "common.hpp"
+namespace shelllet {
+    namespace property{
+        class DatePropertyManagerPrivate;
+        class DatePropertyManager : public AbstractPropertyManager, private boost::noncopyable{
+            Q_DECLARE_PRIVATE(DatePropertyManager)
+        public:
+            DatePropertyManager(Object*parent = nullptr);
+			Q_OBJECT
+		public:
+			DatePropertyManager(QObject* parent = 0);
+			~DatePropertyManager();
+
+			QDate value(const PropertySheet* property) const;
+			QDate minimum(const PropertySheet* property) const;
+			QDate maximum(const PropertySheet* property) const;
+
+		public Q_SLOTS:
+			void setValue(PropertySheet* property, const QDate& val);
+			void setMinimum(PropertySheet* property, const QDate& minVal);
+			void setMaximum(PropertySheet* property, const QDate& maxVal);
+			void setRange(PropertySheet* property, const QDate& minVal, const QDate& maxVal);
+		Q_SIGNALS:
+			void valueChanged(PropertySheet* property, const QDate& val);
+			void rangeChanged(PropertySheet* property, const QDate& minVal, const QDate& maxVal);
+		protected:
+			QString valueText(const PropertySheet* property) const;
+			virtual void initializeProperty(PropertySheet* property);
+			virtual void uninitializeProperty(PropertySheet* property);
+		private:
+			//QScopedPointer<QtDatePropertyManagerPrivate> d_ptr;
+			//Q_DECLARE_PRIVATE(QtDatePropertyManager)
+			//	Q_DISABLE_COPY_MOVE(QtDatePropertyManager)
+        protected:
+            DatePropertyManager(DatePropertyManagerPrivate& d, Object*parent = nullptr);
+        };
+    }
+}
+    

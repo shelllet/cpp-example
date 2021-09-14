@@ -1,0 +1,19 @@
+#include "property/datepropertymanager.h"
+#include "property/private/datepropertymanager_p.h"
+
+namespace shelllet{
+    namespace property{
+        
+    }
+}
+using namespace shelllet::property;
+DatePropertyManager::DatePropertyManager(Object* parent /*= nullptr*/)
+    :DatePropertyManager(*new DatePropertyManagerPrivate, parent)
+{
+
+}
+DatePropertyManager::DatePropertyManager(DatePropertyManagerPrivate& d, Object* parent /*= nullptr*/)
+	: AbstractPropertyManager(d, parent)
+{
+
+}

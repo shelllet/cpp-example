@@ -1,0 +1,78 @@
+#include "graphics.hpp"
+#include "graphics/code.h"
+#include "graphics/private/code_p.h"
+#include "qpushbutton.h"
+namespace shelllet {
+
+	namespace graphics {
+
+		class CodeDialog : public MainWindow {
+		public:
+			CodeDialog() :MainWindow(nullptr, WindowType::AllButton) {
+				setCentralWidget(new QsciScintilla);
+			}
+
+			QsciScintilla* scintillaWidget() {
+				return dynamic_cast<QsciScintilla*>(centralWidget());
+			}
+		};
+	}
+}
+
+
+void shelllet::graphics::CodePrivate::setupUi(Code* parent)
+{
+	layout = new QGraphicsLinearLayout(Qt::Orientation::Vertical, parent);
+	layout->setContentsMargins(11, 11, 11, 11);
+
+	//new ScintillaPage(std::filesystem::relative(filename, currentDir_), this);
+	button = new QPushButton;
+	button->setText(QObject::tr("open code editor"));
+	dialog = new CodeDialog;
+	proxy = new QGraphicsProxyWidget(parent);
+	proxy->setWidget(button);
+
+	lexer = new QsciLexerPython(parent);
+	layout->addItem(proxy);
+}
+
+
+
+
+shelllet::graphics::Code::Code(const std::shared_ptr<CompositeProperty>& property, QGraphicsItem* parent /*= 0*/)
+	: ElementItem(*new CodePrivate, property, parent)
+{
+	Q_D(Code);
+	d->setupUi(this);
+	d->dialog->scintillaWidget()->setLexer(d->lexer);
+
+	d->dialog->scintillaWidget()->setUtf8(true);
+
+
+	connect(d->button, &QPushButton::clicked, [d]() {d->dialog->show(); });
+
+	d->dialog->scintillaWidget()->installEventFilter(this);
+}
+
+shelllet::graphics::Code::~Code()
+{
+	Q_D(Code);
+	delete d->dialog;
+}
+
+bool shelllet::graphics::Code::eventFilter(QObject* watched, QEvent* event)
+{
+	Q_D(Code);
+	if (dynamic_cast<QsciScintilla*>(watched)
+		&& event->type() == QEvent::Close) {
+
+		d->pFunc()->setCode(String::fromQString(d->dialog->scintillaWidget()->text()));
+
+	}
+	else if (dynamic_cast<QsciScintilla*>(watched)
+		&& event->type() == QEvent::Show) {
+		d->dialog->scintillaWidget()->setText(d->pFunc()->code().toQString());
+	}
+
+	return false;
+}

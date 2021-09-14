@@ -1,0 +1,23 @@
+#pragma once
+#include "pugixml.hpp"
+#include "composite_property.h"
+class QtProperty;
+class QtTreePropertyBrowser;
+namespace shelllet::properties {
+	class Helper {
+	public:
+		static void register_meta_type();
+
+
+		static std::unique_ptr<CompositeProperty> createRoot();
+	//	static std::unique_ptr<CompositeProperty> create_node(pugi::xml_node node);
+
+		//static std::string toData(const std::shared_ptr<CompositeProperty>& data);
+
+	//	static std::shared_ptr<CompositeProperty> fromData(const std::string& data);
+
+		static std::string toString(const pugi::xml_node& node);
+
+
+	};
+}

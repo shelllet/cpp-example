@@ -1,0 +1,82 @@
+#include "properties.hpp"
+#include "properties/private/processstart_p.h"
+#include "properties/processstart.h"
+
+
+shelllet::properties::ProcessStart::ProcessStart(const pugi::xml_node& node, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new ProcessStartPrivate, node, parent)
+{
+	Q_D(ProcessStart);
+	d->m_fileName = node.attribute("filename").value();
+}
+
+void shelllet::properties::ProcessStart::setFileName(const String& fileName)
+{
+	Q_D(ProcessStart);
+	d->m_fileName = fileName;
+}
+
+void shelllet::properties::ProcessStart::setParameters(const QStringList& parameters)
+{
+	Q_D(ProcessStart);
+	d->m_parameters = parameters;
+}
+
+void shelllet::properties::ProcessStart::setWorkingDirectory(const QString& workingDirectory)
+{
+	Q_D(ProcessStart);
+	d->m_workingDirectory = workingDirectory;
+}
+
+String shelllet::properties::ProcessStart::fileName() const
+{
+	Q_D(const ProcessStart);
+	return d->m_fileName;
+}
+
+QStringList shelllet::properties::ProcessStart::parameters() const
+{
+	Q_D(const ProcessStart);
+	return d->m_parameters;
+}
+
+QString shelllet::properties::ProcessStart::workingDirectory() const
+{
+	Q_D(const ProcessStart);
+	return d->m_workingDirectory;
+}
+
+int shelllet::properties::ProcessStart::getPropertyMetaTypeID() const
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+void shelllet::properties::ProcessStart::getCode(std::ostringstream& oss)
+{
+	Q_D(ProcessStart);
+
+	oss //<< "{" << std::endl
+	//	<< "from system import file_remove"
+		<< std::endl
+		<< "process_start.invoke"
+		<< "(" << json() << ");"
+		<< std::endl
+		//<< "}"
+		<< std::endl;
+}
+
+
+//std::string shelllet::properties::ProcessStart::getImport() const
+//{
+//	return "from system import process_start";
+//}
+
+//std::unique_ptr<pugi::xml_document> shelllet::properties::ProcessStart::getNode()
+//{
+//	Q_D(ProcessStart);
+//	auto doc = __super::getNode();
+//	doc->document_element().append_attribute("filename") = d->m_fileName.data();
+//
+//	LOG_DEBUG(PROJECT_NAME) << *doc;
+//	return doc;
+//}

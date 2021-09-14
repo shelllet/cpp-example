@@ -1,0 +1,10 @@
+#include "properties.hpp"
+#include "properties/workflow_while.h"
+#include "properties/private/workflow_while_p.h"
+
+
+
+shelllet::properties::WorkflowWhile::WorkflowWhile(const pugi::xml_node& node, QObject* parent /*= nullptr*/)
+	: CompositeProperty(*new WorkflowWhilePrivate,  node, parent)
+{
+}

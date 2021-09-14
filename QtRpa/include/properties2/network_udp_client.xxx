@@ -1,0 +1,31 @@
+#pragma once
+#include "composite_property.h"
+
+namespace shelllet {
+	namespace properties {
+		class NetworkUDPClientPrivate;
+		class NetworkUDPClient : public CompositeProperty
+		{
+			Q_DECLARE_PRIVATE(NetworkUDPClient)
+		public:
+			NetworkUDPClient(const pugi::xml_node& node, QObject* parent = nullptr);
+			void setCode(const QString& fileName);
+			QString getCode() const;
+
+			void setIP(const QString& ip);
+			QString getIP() const;
+
+			int16_t getPort() const;
+			void setPort(int16_t port);
+
+			QString getOutputVariable() const;
+			void setOutputVariable(const QString& variable);
+
+			int getPropertyMetaTypeID() const override;
+
+		protected:
+			
+		};
+	}
+}
+Q_DECLARE_METATYPE(shelllet::properties::NetworkUDPClient*)
